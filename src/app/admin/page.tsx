@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Session } from "@supabase/supabase-js";
 import { Project, ProfileSettings, Experience, Education, Certification, Skill, supabase } from "@/lib/supabase";
 import {
@@ -107,20 +108,29 @@ export default function AdminPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
+  const router = useRouter();
+
   // Verify database connection & check auth session
   useEffect(() => {
     async function checkConnection() {
       try {
+        // Direct URL protection: Only allow entry if triggered from secret chatbot command or existing valid session
+        const hasChatbotKey = typeof window !== "undefined" && sessionStorage.getItem("admin_portal_access") === "unlocked";
+        const wasSimLoggedIn = typeof window !== "undefined" && localStorage.getItem("sim_logged_in") === "true";
+
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        setSession(currentSession);
+
+        if (!hasChatbotKey && !currentSession && !wasSimLoggedIn) {
+          router.replace("/");
+          return;
+        }
+
         const { error } = await supabase.from("projects").select("id").limit(1);
         if (error) throw error;
         setDbStatus("connected");
 
-        // Fetch current session
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        setSession(currentSession);
-
         // Check if we were previously logged in via simulator
-        const wasSimLoggedIn = localStorage.getItem("sim_logged_in") === "true";
         if (wasSimLoggedIn) {
           setIsSimulatedLoggedIn(true);
           loadSimulatedData();
@@ -131,7 +141,7 @@ export default function AdminPage() {
         console.warn("Database connection could not be verified. Showing simulator mode.", err);
         setDbStatus("disconnected");
         // In simulator mode, check if we were previously logged in
-        const wasSimLoggedIn = localStorage.getItem("sim_logged_in") === "true";
+        const wasSimLoggedIn = typeof window !== "undefined" && localStorage.getItem("sim_logged_in") === "true";
         if (wasSimLoggedIn) {
           setIsSimulatedLoggedIn(true);
           loadSimulatedData();
@@ -269,16 +279,19 @@ export default function AdminPage() {
   const handleLogout = async () => {
     setError("");
     setSuccess("");
-    try {
-      setIsSimulatedLoggedIn(false);
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("admin_portal_access");
       localStorage.removeItem("sim_logged_in");
+    }
+    setIsSimulatedLoggedIn(false);
+    try {
       if (dbStatus === "connected") {
-        const { error: logoutErr } = await supabase.auth.signOut();
-        if (logoutErr) throw logoutErr;
+        await supabase.auth.signOut();
       }
-      setSuccess("Logged out successfully!");
+      router.replace("/");
     } catch (err: any) {
       setError(err.message || "Sign out failed");
+      router.replace("/");
     }
   };
 

@@ -65,6 +65,9 @@ export default function ChatBot() {
     // Secret command check
     if (trimmed.toLowerCase() === SECRET_COMMAND) {
       setInput("");
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("admin_portal_access", "unlocked");
+      }
       router.push("/admin");
       return;
     }
