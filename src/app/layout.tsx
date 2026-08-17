@@ -41,9 +41,9 @@ export default function RootLayout({
               {/* Left Identity Badge */}
               <Link 
                 href="/#home"
-                className="hidden lg:flex items-center gap-3 rounded-full px-4 py-2 border border-white/10 bg-slate-950/70 backdrop-blur-md shadow-xl group hover:border-cyan-500/30 transition-all duration-300 select-none"
+                className="flex items-center gap-2 sm:gap-3 rounded-full p-1.5 sm:px-4 sm:py-2 border border-white/10 bg-slate-950/70 backdrop-blur-md shadow-xl group hover:border-cyan-500/30 transition-all duration-300 select-none"
               >
-                <div className="relative w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center shadow-[0_0_16px_rgba(6,182,212,0.65)] ring-1 ring-cyan-400/60 bg-gradient-to-b from-cyan-950/60 to-slate-950 group-hover:scale-105 group-hover:shadow-[0_0_22px_rgba(6,182,212,0.9)] group-hover:ring-cyan-300 transition-all duration-300">
+                <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full flex-shrink-0 flex items-center justify-center shadow-[0_0_16px_rgba(6,182,212,0.65)] ring-1 ring-cyan-400/60 bg-gradient-to-b from-cyan-950/60 to-slate-950 group-hover:scale-105 group-hover:shadow-[0_0_22px_rgba(6,182,212,0.9)] group-hover:ring-cyan-300 transition-all duration-300">
                   <svg viewBox="0 0 36 36" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                       <linearGradient id="jmBgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -81,18 +81,20 @@ export default function RootLayout({
                     </text>
                   </svg>
                 </div>
-                <div className="flex items-center gap-1.5 font-syne font-bold text-sm tracking-wider text-white">
+                <div className="hidden sm:flex items-center gap-1.5 font-syne font-bold text-sm tracking-wider text-white">
                   <span>JERWIN</span>
                   <span className="text-cyan-400">MASAGCA</span>
                 </div>
               </Link>
 
-              {/* Center Pill: Dynamic Scroll-Spy Navigation Capsule */}
+              {/* Center: Dynamic Scroll-Spy Capsule (Desktop) / Breadcrumb Dropdown (Mobile) */}
               <NavbarScrollSpy />
 
-              {/* Right Side: Quick Social Links & Theme Switcher */}
-              <div className="hidden lg:flex items-center gap-3">
-                <HeaderNavActions />
+              {/* Right Side: Social Links (Desktop) & Theme Switcher (All Devices) */}
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="hidden lg:flex items-center gap-3">
+                  <HeaderNavActions />
+                </div>
 
                 {/* Theme Switcher */}
                 <ThemeToggle />

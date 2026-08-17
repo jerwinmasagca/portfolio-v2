@@ -113,7 +113,7 @@ export default function ChatBot() {
   return (
     <>
       {/* Floating Chat Bubble Container */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[60] flex items-center justify-center">
+      <div className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-[99] flex items-center justify-center pointer-events-auto">
         {/* Floating Zzz Particles when Sleeping */}
         {isSleeping && (
           <div className="absolute -top-7 -left-1 pointer-events-none select-none font-mono font-black text-cyan-300">
@@ -133,14 +133,14 @@ export default function ChatBot() {
           onClick={handleButtonClick}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className={`group relative flex items-center justify-center w-14 h-14 rounded-full border transition-all duration-300 cursor-pointer select-none ${
+          className={`group relative flex items-center justify-center w-13 h-13 sm:w-14 sm:h-14 rounded-full border transition-all duration-300 cursor-pointer select-none ${
             isSleeping
-              ? "bg-slate-950/90 border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.2)] animate-bot-sleep"
+              ? "bg-slate-950/95 border-cyan-400/50 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)] animate-bot-sleep"
               : isWaking
               ? "bg-gradient-to-tr from-cyan-500 to-sky-400 border-cyan-300 text-slate-950 shadow-[0_0_30px_rgba(6,182,212,0.8)] scale-110 animate-bot-wake"
               : isOpen
-              ? "bg-slate-900 border-cyan-400/50 text-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.4)]"
-              : "bg-slate-950/90 border-cyan-400/60 text-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.35)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] hover:border-cyan-400 hover:scale-105"
+              ? "bg-slate-900 border-cyan-400/60 text-cyan-300 shadow-[0_0_25px_rgba(6,182,212,0.5)]"
+              : "bg-slate-950/95 border-cyan-400/60 text-cyan-300 shadow-[0_0_25px_rgba(6,182,212,0.5)] hover:shadow-[0_0_35px_rgba(6,182,212,0.7)] hover:border-cyan-300 hover:scale-105"
           }`}
           aria-label="Toggle AI Assistant"
         >
@@ -180,7 +180,7 @@ export default function ChatBot() {
 
       {/* Chat Panel */}
       <div
-        className={`fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-[60] w-[calc(100vw-2rem)] max-w-[360px] max-h-[75vh] sm:max-h-[520px] flex flex-col rounded-2xl border border-white/10 bg-slate-950/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] transition-all duration-300 origin-bottom-right ${
+        className={`fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-[99] w-[calc(100vw-2rem)] max-w-[360px] max-h-[75vh] sm:max-h-[520px] flex flex-col rounded-2xl border border-white/10 bg-slate-950/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] transition-all duration-300 origin-bottom-right ${
           isOpen
             ? "scale-100 opacity-100 pointer-events-auto translate-y-0"
             : "scale-90 opacity-0 pointer-events-none translate-y-4"
