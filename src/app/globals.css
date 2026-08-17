@@ -1,0 +1,803 @@
+@import "tailwindcss";
+
+:root {
+  --background: #030712;
+  --foreground: #f8fafc;
+  --primary-glow: radial-gradient(rgba(6, 182, 212, 0.04), rgba(0, 0, 0, 0));
+  --secondary-glow: linear-gradient(to bottom right,
+      rgba(6, 182, 212, 0),
+      rgba(6, 182, 212, 0),
+      rgba(6, 182, 212, 0.1));
+  --card-bg: rgba(255, 255, 255, 0.015);
+  --card-border: rgba(255, 255, 255, 0.05);
+  --card-hover-border: rgba(6, 182, 212, 0.2);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-outfit), sans-serif;
+  --font-syne: var(--font-syne), sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+  position: relative;
+  font-family: var(--font-outfit), sans-serif;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-glow);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(10, 10, 20, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--card-hover-border);
+  box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.5),
+    0 0 20px 2px rgba(6, 182, 212, 0.08);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020205;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Glow effects */
+.glow-text {
+  text-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Premium Noise & Dot Matrix Backgrounds */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0.015;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.bg-dot-grid {
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(6, 182, 212, 0.04) 1px, transparent 0);
+  background-size: 28px 28px;
+  animation: gridDrift 6s linear infinite;
+  z-index: 0;
+}
+
+.bg-dot-grid-highlight {
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(6, 182, 212, 0.45) 1.5px, transparent 0);
+  background-size: 28px 28px;
+  animation: gridDrift 6s linear infinite;
+  z-index: 1;
+  /* Mask it around the cursor position with a radial gradient */
+  mask-image: radial-gradient(circle 160px at var(--mouse-x, 0px) var(--mouse-y, 0px), black 10%, rgba(0, 0, 0, 0.45) 50%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle 160px at var(--mouse-x, 0px) var(--mouse-y, 0px), black 10%, rgba(0, 0, 0, 0.45) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+.mouse-spotlight {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle 220px at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(6, 182, 212, 0.07), transparent 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes gridDrift {
+  0% {
+    background-position: 0px 0px;
+  }
+
+  100% {
+    background-position: 28px 28px;
+  }
+}
+
+/* Floating Ambient Glow Orbs - Liquid Mesh Gradient Animations */
+.glow-orb-1 {
+  position: fixed;
+  top: -10%;
+  left: -10%;
+  width: 55vw;
+  height: 55vw;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(8, 145, 178, 0.12) 50%, transparent 80%);
+  filter: blur(85px);
+  z-index: 0;
+  pointer-events: none;
+  animation: morph1 3.5s ease-in-out infinite alternate;
+}
+
+.glow-orb-2 {
+  position: fixed;
+  bottom: -15%;
+  right: -10%;
+  width: 65vw;
+  height: 65vw;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.28) 0%, rgba(79, 70, 229, 0.08) 50%, transparent 80%);
+  filter: blur(95px);
+  z-index: 0;
+  pointer-events: none;
+  animation: morph2 4.5s ease-in-out infinite alternate;
+}
+
+.glow-orb-3 {
+  position: fixed;
+  top: 25%;
+  left: 15%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.24) 0%, rgba(219, 39, 119, 0.06) 50%, transparent 80%);
+  filter: blur(90px);
+  z-index: 0;
+  pointer-events: none;
+  animation: morph3 4s ease-in-out infinite alternate;
+}
+
+@keyframes morph1 {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+  }
+
+  50% {
+    transform: translate(150px, 120px) scale(1.2);
+    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
+  }
+
+  100% {
+    transform: translate(-100px, 90px) scale(0.9);
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+  }
+}
+
+@keyframes morph2 {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
+  }
+
+  50% {
+    transform: translate(-180px, -90px) scale(0.8);
+    border-radius: 40% 60% 30% 70% / 40% 50% 50% 60%;
+  }
+
+  100% {
+    transform: translate(90px, -150px) scale(1.15);
+    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
+  }
+}
+
+@keyframes morph3 {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+    border-radius: 50% 50% 50% 50%;
+  }
+
+  50% {
+    transform: translate(120px, -130px) scale(1.25);
+    border-radius: 30% 70% 70% 30% / 50% 30% 70% 50%;
+  }
+
+  100% {
+    transform: translate(-100px, 100px) scale(0.9);
+    border-radius: 50% 50% 50% 50%;
+  }
+}
+
+
+
+/* Holographic Cyber-Card & Profile Badge Animations */
+@keyframes profileGradientRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes profileScanline {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 0.8;
+  }
+
+  70% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateY(300%);
+    opacity: 0;
+  }
+}
+
+@keyframes profilePulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 35px -5px rgba(6, 182, 212, 0.25), 0 0 15px 0px rgba(99, 102, 241, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 65px 0px rgba(6, 182, 212, 0.45), 0 0 30px 5px rgba(168, 85, 247, 0.35);
+  }
+}
+
+@keyframes floatGentle {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-8px) rotate(0.5deg);
+  }
+}
+
+.profile-card-container {
+  animation: floatGentle 5s ease-in-out infinite, profilePulseGlow 4s ease-in-out infinite;
+}
+
+.profile-border-glow {
+  background: conic-gradient(from 0deg, #06b6d4, #6366f1, #d946ef, #06b6d4);
+  animation: profileGradientRotate 4s linear infinite;
+}
+
+.profile-scanline {
+  animation: profileScanline 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Clean Editorial Visual Elements */
+.editorial-card {
+  background: rgba(15, 23, 42, 0.25);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 2rem;
+  padding: 2.5rem;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.editorial-card:hover {
+  border-color: rgba(6, 182, 212, 0.15);
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.5),
+    0 0 30px 1px rgba(6, 182, 212, 0.02);
+}
+
+/* Auto-Play Carousel Slider Transition Rules */
+.carousel-track {
+  display: flex;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.carousel-slide {
+  flex-shrink: 0;
+  width: 100%;
+  opacity: 0.3;
+  scale: 0.98;
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  scale: 1;
+}
+
+/* Cockpit Card Styling */
+.cockpit-card {
+  background: rgba(15, 23, 42, 0.25);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 1.5rem;
+  padding: 1.25rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.cockpit-card:hover {
+  border-color: rgba(6, 182, 212, 0.12);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.4);
+}
+
+/* Custom Scrollbars for Cockpit widgets */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.2);
+}
+
+/* ========================================================================= */
+/* DYNAMIC THEMES: WATERCOLOR & DASHBOARD */
+/* ========================================================================= */
+
+/* Watercolor Theme (Light Mode) */
+body.theme-watercolor {
+  background-color: #eef2f6 !important;
+  /* Bright off-white base */
+  background-image: none !important;
+  color: #0f172a !important;
+  /* Charcoal text */
+}
+
+/* Realistic Multi-Layer Volumetric Smoke Animations */
+@keyframes smokeLayer1 {
+  0% {
+    transform: scale(1.05) translate(0px, 0px) rotate(0deg);
+    filter: blur(2px);
+    opacity: 0.85;
+  }
+
+  33% {
+    transform: scale(1.15) translate(-25px, 15px) rotate(1.5deg);
+    filter: blur(5px);
+    opacity: 0.95;
+  }
+
+  66% {
+    transform: scale(1.08) translate(20px, -20px) rotate(-1deg);
+    filter: blur(3px);
+    opacity: 0.75;
+  }
+
+  100% {
+    transform: scale(1.05) translate(0px, 0px) rotate(0deg);
+    filter: blur(2px);
+    opacity: 0.85;
+  }
+}
+
+@keyframes smokeLayer2 {
+  0% {
+    transform: scale(1.1) translate(0px, 0px) rotate(0deg);
+    filter: blur(6px);
+    opacity: 0.55;
+  }
+
+  50% {
+    transform: scale(1.22) translate(30px, -25px) rotate(-2deg);
+    filter: blur(10px);
+    opacity: 0.75;
+  }
+
+  100% {
+    transform: scale(1.1) translate(0px, 0px) rotate(0deg);
+    filter: blur(6px);
+    opacity: 0.55;
+  }
+}
+
+@keyframes smokePulseSlow {
+
+  0%,
+  100% {
+    opacity: 0.7;
+    filter: brightness(0.95) contrast(1.1);
+  }
+
+  50% {
+    opacity: 0.95;
+    filter: brightness(1.08) contrast(1.2);
+  }
+}
+
+.smoke-layer-base {
+  animation: smokeLayer1 22s ease-in-out infinite, smokePulseSlow 14s ease-in-out infinite;
+  will-change: transform, filter, opacity;
+}
+
+.smoke-layer-overlay {
+  animation: smokeLayer2 30s ease-in-out infinite;
+  will-change: transform, filter, opacity;
+}
+
+/* Light / Watercolor Mode Typography: Matches Dark Mode Colors and Gradients */
+body.theme-watercolor h1,
+body.theme-watercolor h2,
+body.theme-watercolor h3,
+body.theme-watercolor h4,
+body.theme-watercolor h5,
+body.theme-watercolor h6,
+body.theme-watercolor .text-white {
+  color: #ffffff !important;
+}
+
+/* Retain vibrant gradient on Name in Watercolor mode */
+body.theme-watercolor .bg-clip-text {
+  filter: none !important;
+}
+
+body.theme-watercolor p,
+body.theme-watercolor li,
+body.theme-watercolor .text-slate-300 {
+  color: #cbd5e1 !important;
+}
+
+body.theme-watercolor .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+body.theme-watercolor .text-slate-500 {
+  color: #64748b !important;
+}
+
+/* Availability Badge & Job Title in Watercolor mode */
+body.theme-watercolor .bg-cyan-500\/10,
+body.theme-watercolor .bg-cyan-500\/5 {
+  background-color: rgba(6, 182, 212, 0.1) !important;
+  border-color: rgba(6, 182, 212, 0.2) !important;
+}
+
+body.theme-watercolor .text-cyan-400,
+body.theme-watercolor .text-cyan-300 {
+  color: #22d3ee !important;
+}
+
+/* Glass cards light mode styling */
+body.theme-watercolor .glass-card,
+body.theme-watercolor .cockpit-card {
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.theme-watercolor .glass-card h3,
+body.theme-watercolor .glass-card h4,
+body.theme-watercolor .glass-card span,
+body.theme-watercolor .cockpit-card h3,
+body.theme-watercolor .cockpit-card h4,
+body.theme-watercolor .cockpit-card span {
+  color: #ffffff !important;
+}
+
+/* Input fields contrast inside contact form */
+body.theme-watercolor input,
+body.theme-watercolor textarea {
+  background-color: rgba(15, 23, 42, 0.75) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+body.theme-watercolor input::placeholder,
+body.theme-watercolor textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* Admin Portal & Global Cards Contrast in Watercolor / Light Mode */
+body.theme-watercolor .admin-card,
+body.theme-watercolor .glass {
+  background: rgba(15, 23, 42, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.theme-watercolor label {
+  color: #94a3b8 !important;
+}
+
+/* Hide all horizontal section dividers in watercolor theme */
+body.theme-watercolor section {
+  border-top: none !important;
+  border-top-color: transparent !important;
+}
+
+/* Hide dashboard-only layouts in watercolor theme */
+body.theme-watercolor .bg-dot-grid,
+body.theme-watercolor .bg-dot-grid-highlight,
+body.theme-watercolor .glow-orb-1,
+body.theme-watercolor .glow-orb-2,
+body.theme-watercolor .glow-orb-3,
+body.theme-watercolor .scanning-line-v,
+body.theme-watercolor .scanning-line-h {
+  display: none !important;
+}
+
+/* Dashboard Theme (Dark Mode) */
+body.theme-dashboard {
+  background-color: #030712 !important;
+  background-image: none !important;
+}
+
+/* ========================================================================= */
+/* SCROLL REVEAL ANIMATION SYSTEM */
+/* ========================================================================= */
+
+.scroll-reveal {
+  transition-property: opacity, transform;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal--hidden {
+  opacity: 0;
+}
+
+/* fadeInUp: elements slide up from 40px below */
+.scroll-reveal--hidden:not(.scroll-reveal--visible) {
+  transform: translateY(40px);
+}
+
+.scroll-reveal--visible.scroll-reveal--fadeInUp {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* fadeInDown: elements slide down from 40px above */
+.scroll-reveal--visible.scroll-reveal--fadeInDown {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal--hidden:has(~ .scroll-reveal--fadeInDown) {
+  transform: translateY(-40px);
+}
+
+/* fadeIn: pure opacity fade */
+.scroll-reveal--visible.scroll-reveal--fadeIn {
+  opacity: 1;
+  transform: none;
+}
+
+/* slideInLeft */
+.scroll-reveal--visible.scroll-reveal--slideInLeft {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* slideInRight */
+.scroll-reveal--visible.scroll-reveal--slideInRight {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* zoomIn */
+.scroll-reveal--visible.scroll-reveal--zoomIn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ========================================================================= */
+/* CHATBOT SLEEPING & WAKE-UP ANIMATIONS */
+/* ========================================================================= */
+
+@keyframes botSleepBreathe {
+
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 18px rgba(6, 182, 212, 0.35), 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  }
+
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 0 36px rgba(6, 182, 212, 0.7), 0 0 18px rgba(14, 165, 233, 0.45), 0 15px 35px -5px rgba(0, 0, 0, 0.6);
+  }
+}
+
+@keyframes botWakeUp {
+  0% {
+    transform: scale(0.92) rotate(0deg);
+  }
+
+  30% {
+    transform: scale(1.22) rotate(-8deg);
+  }
+
+  55% {
+    transform: scale(1.08) rotate(6deg);
+  }
+
+  75% {
+    transform: scale(1.16) rotate(-3deg);
+  }
+
+  100% {
+    transform: scale(1.1) rotate(0deg);
+  }
+}
+
+@keyframes floatZ1 {
+  0% {
+    opacity: 0;
+    transform: translate(0px, 0px) scale(0.6) rotate(-5deg);
+  }
+
+  20% {
+    opacity: 0.95;
+  }
+
+  70% {
+    opacity: 0.75;
+    transform: translate(-10px, -18px) scale(0.85) rotate(-12deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-16px, -32px) scale(1) rotate(-18deg);
+  }
+}
+
+@keyframes floatZ2 {
+  0% {
+    opacity: 0;
+    transform: translate(0px, 0px) scale(0.7) rotate(0deg);
+  }
+
+  20% {
+    opacity: 0.95;
+  }
+
+  70% {
+    opacity: 0.8;
+    transform: translate(-14px, -26px) scale(1) rotate(8deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-22px, -44px) scale(1.2) rotate(14deg);
+  }
+}
+
+@keyframes floatZ3 {
+  0% {
+    opacity: 0;
+    transform: translate(0px, 0px) scale(0.8) rotate(5deg);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 0.85;
+    transform: translate(-18px, -34px) scale(1.15) rotate(-10deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-28px, -56px) scale(1.35) rotate(-15deg);
+  }
+}
+
+@keyframes wakeShockwave {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+.animate-bot-sleep {
+  animation: botSleepBreathe 3.6s ease-in-out infinite;
+}
+
+.animate-bot-wake {
+  animation: botWakeUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-wake-shockwave {
+  animation: wakeShockwave 0.75s ease-out forwards;
+}
+
+.animate-zzz-1 {
+  animation: floatZ1 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 0s;
+}
+
+.animate-zzz-2 {
+  animation: floatZ2 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 0.9s;
+}
+
+.animate-zzz-3 {
+  animation: floatZ3 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 1.8s;
+}
