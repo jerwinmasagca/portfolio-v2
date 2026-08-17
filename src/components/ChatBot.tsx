@@ -113,7 +113,7 @@ export default function ChatBot() {
   return (
     <>
       {/* Floating Chat Bubble Container */}
-      <div className="fixed bottom-6 right-6 z-[60] flex items-center justify-center">
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[60] flex items-center justify-center">
         {/* Floating Zzz Particles when Sleeping */}
         {isSleeping && (
           <div className="absolute -top-7 -left-1 pointer-events-none select-none font-mono font-black text-cyan-300">
@@ -133,49 +133,45 @@ export default function ChatBot() {
           onClick={handleButtonClick}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className={`relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 cursor-pointer ${
-            isOpen
-              ? "bg-slate-800 text-slate-300 rotate-0 hover:scale-105"
+          className={`group relative flex items-center justify-center w-14 h-14 rounded-full border transition-all duration-300 cursor-pointer select-none ${
+            isSleeping
+              ? "bg-slate-950/90 border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.2)] animate-bot-sleep"
               : isWaking
-              ? "bg-gradient-to-br from-cyan-400 via-sky-500 to-indigo-600 text-white animate-bot-wake shadow-[0_0_35px_rgba(6,182,212,0.7)]"
-              : isSleeping
-              ? "bg-gradient-to-br from-slate-900 via-cyan-950 to-slate-900 text-cyan-400 border border-cyan-500/40 animate-bot-sleep"
-              : "bg-gradient-to-br from-cyan-500 to-sky-600 text-white shadow-[0_0_30px_rgba(6,182,212,0.5)] hover:scale-110"
+              ? "bg-gradient-to-tr from-cyan-500 to-sky-400 border-cyan-300 text-slate-950 shadow-[0_0_30px_rgba(6,182,212,0.8)] scale-110 animate-bot-wake"
+              : isOpen
+              ? "bg-slate-900 border-cyan-400/50 text-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.4)]"
+              : "bg-slate-950/90 border-cyan-400/60 text-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.35)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] hover:border-cyan-400 hover:scale-105"
           }`}
-          title={isOpen ? "Close chat" : isSleeping ? "Sleeping AI Assistant (Click or hover to wake up)" : "Jerwin's Assistant"}
+          aria-label="Toggle AI Assistant"
         >
+          {/* Subtle Ambient Pulse Ring when awake */}
+          {!isSleeping && (
+            <span className="absolute -inset-1 rounded-full bg-cyan-400/20 animate-ping pointer-events-none duration-1000" />
+          )}
+
           {isOpen ? (
-            <X className="w-6 h-6 transition-transform duration-200" />
+            <X className="w-6 h-6 text-white transition-transform duration-200" />
           ) : isSleeping ? (
             /* Sleeping Bot Face Icon */
             <svg viewBox="0 0 36 36" className="w-7 h-7 transition-all duration-300" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Antenna */}
               <line x1="18" y1="4" x2="18" y2="8" stroke="#38bdf8" strokeWidth="2.5" strokeLinecap="round" />
               <circle cx="18" cy="4" r="2" fill="#38bdf8" />
-              {/* Head */}
               <rect x="5" y="8" width="26" height="22" rx="7" fill="#0f172a" stroke="#0ea5e9" strokeWidth="1.5" />
-              {/* Screen / Visor */}
               <rect x="8" y="12" width="20" height="14" rx="4" fill="#020617" />
-              {/* Sleepy Closed Curved Eyes */}
               <path d="M11 18.5 Q14 21 17 18.5" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" fill="none" />
               <path d="M19 18.5 Q22 21 25 18.5" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" fill="none" />
             </svg>
           ) : (
             /* Awake Smiling Bot Face Icon */
             <svg viewBox="0 0 36 36" className="w-7 h-7 transition-all duration-300" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Antenna with energetic glowing tip */}
               <line x1="18" y1="4" x2="18" y2="8" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
               <circle cx="18" cy="4" r="2.5" fill="#38bdf8" />
-              {/* Head */}
               <rect x="5" y="8" width="26" height="22" rx="7" fill="#0284c7" stroke="#ffffff" strokeWidth="1.5" />
-              {/* Screen / Visor */}
               <rect x="8" y="12" width="20" height="14" rx="4" fill="#020617" />
-              {/* Awake Shiny Eyes */}
               <circle cx="13.5" cy="18" r="2.5" fill="#38bdf8" />
               <circle cx="14.2" cy="17.2" r="0.9" fill="#ffffff" />
               <circle cx="22.5" cy="18" r="2.5" fill="#38bdf8" />
               <circle cx="23.2" cy="17.2" r="0.9" fill="#ffffff" />
-              {/* Happy Smile */}
               <path d="M15 22.5 Q18 24.5 21 22.5" stroke="#38bdf8" strokeWidth="1.5" strokeLinecap="round" fill="none" />
             </svg>
           )}
@@ -184,7 +180,7 @@ export default function ChatBot() {
 
       {/* Chat Panel */}
       <div
-        className={`fixed bottom-24 right-6 z-[60] w-[360px] max-h-[520px] flex flex-col rounded-2xl border border-white/10 bg-slate-950/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] transition-all duration-300 origin-bottom-right ${
+        className={`fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-[60] w-[calc(100vw-2rem)] max-w-[360px] max-h-[75vh] sm:max-h-[520px] flex flex-col rounded-2xl border border-white/10 bg-slate-950/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] transition-all duration-300 origin-bottom-right ${
           isOpen
             ? "scale-100 opacity-100 pointer-events-auto translate-y-0"
             : "scale-90 opacity-0 pointer-events-none translate-y-4"

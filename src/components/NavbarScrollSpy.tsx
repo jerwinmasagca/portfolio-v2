@@ -52,8 +52,8 @@ export default function NavbarScrollSpy() {
   }, []);
 
   return (
-    <div className="mx-auto lg:mx-0 flex items-center gap-1.5 rounded-full p-2 border border-white/10 bg-slate-950/70 backdrop-blur-md shadow-xl">
-      <nav className="flex items-center space-x-1.5">
+    <div className="mx-auto lg:mx-0 flex items-center rounded-full p-1 sm:p-1.5 border border-white/10 bg-slate-950/70 backdrop-blur-md shadow-xl max-w-[calc(100vw-2rem)] overflow-x-auto scrollbar-none">
+      <nav className="flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap">
         {NAV_ITEMS.map((item) => {
           const isActive = activeSection === item.id;
 
@@ -61,7 +61,7 @@ export default function NavbarScrollSpy() {
             <Link
               key={item.id}
               href={item.href}
-              className={`rounded-full px-4.5 py-2 text-sm font-bold transition-all duration-300 ${
+              className={`rounded-full px-3 sm:px-4.5 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold sm:font-bold transition-all duration-300 ${
                 isActive
                   ? "bg-white text-slate-950 shadow-md scale-105"
                   : "text-slate-300 hover:text-white hover:bg-white/5"

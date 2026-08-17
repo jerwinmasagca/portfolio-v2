@@ -373,7 +373,8 @@ export default function Home() {
 
         {/* ========================================================================= */}
         {/* HERO SECTION */}
-        {/* ========================================================================= */}        <section id="home" className="h-[calc(100vh-4rem)] min-h-[640px] flex flex-col justify-center py-4 lg:py-6 overflow-hidden">
+        {/* ========================================================================= */}
+        <section id="home" className="min-h-[calc(100vh-4rem)] flex flex-col justify-center py-8 lg:py-6">
           <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
@@ -575,17 +576,17 @@ export default function Home() {
                     <>
                       <button
                         onClick={prevSlide}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-5 w-10 h-10 rounded-full bg-slate-900/80 border border-white/10 text-white hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all flex items-center justify-center backdrop-blur-sm"
+                        className="absolute left-1 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-900/90 border border-white/15 text-white hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all flex items-center justify-center backdrop-blur-md shadow-lg"
                         aria-label="Previous project"
                       >
-                        <ChevronLeft className="w-5 h-5" />
+                        <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                       </button>
                       <button
                         onClick={nextSlide}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-5 w-10 h-10 rounded-full bg-slate-900/80 border border-white/10 text-white hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all flex items-center justify-center backdrop-blur-sm"
+                        className="absolute right-1 sm:-right-5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-900/90 border border-white/15 text-white hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all flex items-center justify-center backdrop-blur-md shadow-lg"
                         aria-label="Next project"
                       >
-                        <ChevronRight className="w-5 h-5" />
+                        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                       </button>
                     </>
                   )}
