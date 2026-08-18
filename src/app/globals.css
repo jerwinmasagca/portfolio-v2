@@ -22,6 +22,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
   overflow-x: hidden;
   max-width: 100vw;
 }
@@ -142,30 +143,29 @@ body::after {
 .bg-dot-grid {
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(rgba(6, 182, 212, 0.06) 1.2px, transparent 0);
+  background-image: radial-gradient(rgba(6, 182, 212, 0.04) 1px, transparent 0);
   background-size: 28px 28px;
-  animation: gridDrift 8s linear infinite;
+  animation: gridDrift 6s linear infinite;
   z-index: 0;
-  pointer-events: none;
 }
 
 .bg-dot-grid-highlight {
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(rgba(6, 182, 212, 0.5) 1.5px, transparent 0);
+  background-image: radial-gradient(rgba(6, 182, 212, 0.45) 1.5px, transparent 0);
   background-size: 28px 28px;
-  animation: gridDrift 8s linear infinite;
+  animation: gridDrift 6s linear infinite;
   z-index: 1;
   /* Mask it around the cursor position with a radial gradient */
-  mask-image: radial-gradient(circle 180px at var(--mouse-x, 0px) var(--mouse-y, 0px), black 15%, rgba(0, 0, 0, 0.4) 55%, transparent 100%);
-  -webkit-mask-image: radial-gradient(circle 180px at var(--mouse-x, 0px) var(--mouse-y, 0px), black 15%, rgba(0, 0, 0, 0.4) 55%, transparent 100%);
+  mask-image: radial-gradient(circle 160px at var(--mouse-x, 0px) var(--mouse-y, 0px), black 10%, rgba(0, 0, 0, 0.45) 50%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle 160px at var(--mouse-x, 0px) var(--mouse-y, 0px), black 10%, rgba(0, 0, 0, 0.45) 50%, transparent 100%);
   pointer-events: none;
 }
 
 .mouse-spotlight {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle 240px at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(6, 182, 212, 0.09), transparent 100%);
+  background: radial-gradient(circle 220px at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(6, 182, 212, 0.07), transparent 100%);
   z-index: 0;
   pointer-events: none;
 }
@@ -183,91 +183,91 @@ body::after {
 /* Floating Ambient Glow Orbs - Liquid Mesh Gradient Animations */
 .glow-orb-1 {
   position: fixed;
-  top: -8%;
-  left: -8%;
-  width: 50vw;
-  height: 50vw;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, rgba(8, 145, 178, 0.1) 50%, transparent 75%);
-  filter: blur(75px);
-  border-radius: 50%;
+  top: -10%;
+  left: -10%;
+  width: 55vw;
+  height: 55vw;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(8, 145, 178, 0.12) 50%, transparent 80%);
+  filter: blur(85px);
   z-index: 0;
   pointer-events: none;
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-  animation: morph1 7s ease-in-out infinite alternate;
+  animation: morph1 3.5s ease-in-out infinite alternate;
 }
 
 .glow-orb-2 {
   position: fixed;
-  bottom: -12%;
-  right: -8%;
-  width: 58vw;
-  height: 58vw;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(79, 70, 229, 0.08) 50%, transparent 75%);
-  filter: blur(85px);
-  border-radius: 50%;
+  bottom: -15%;
+  right: -10%;
+  width: 65vw;
+  height: 65vw;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.28) 0%, rgba(79, 70, 229, 0.08) 50%, transparent 80%);
+  filter: blur(95px);
   z-index: 0;
   pointer-events: none;
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-  animation: morph2 9s ease-in-out infinite alternate;
+  animation: morph2 4.5s ease-in-out infinite alternate;
 }
 
 .glow-orb-3 {
   position: fixed;
-  top: 22%;
-  left: 18%;
-  width: 48vw;
-  height: 48vw;
-  background: radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, rgba(219, 39, 119, 0.06) 50%, transparent 75%);
-  filter: blur(80px);
-  border-radius: 50%;
+  top: 25%;
+  left: 15%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.24) 0%, rgba(219, 39, 119, 0.06) 50%, transparent 80%);
+  filter: blur(90px);
   z-index: 0;
   pointer-events: none;
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-  animation: morph3 8s ease-in-out infinite alternate;
+  animation: morph3 4s ease-in-out infinite alternate;
 }
 
 @keyframes morph1 {
   0% {
-    transform: translate3d(0px, 0px, 0) scale(1);
+    transform: translate(0px, 0px) scale(1);
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
   }
 
   50% {
-    transform: translate3d(80px, 60px, 0) scale(1.15);
+    transform: translate(150px, 120px) scale(1.2);
+    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
   }
 
   100% {
-    transform: translate3d(-100px, 90px, 0) scale(0.92);
+    transform: translate(-100px, 90px) scale(0.9);
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
   }
 }
 
 @keyframes morph2 {
   0% {
-    transform: translate3d(0px, 0px, 0) scale(1);
+    transform: translate(0px, 0px) scale(1);
+    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
   }
 
   50% {
-    transform: translate3d(-110px, -70px, 0) scale(0.88);
+    transform: translate(-180px, -90px) scale(0.8);
+    border-radius: 40% 60% 30% 70% / 40% 50% 50% 60%;
   }
 
   100% {
-    transform: translate3d(90px, -110px, 0) scale(1.12);
+    transform: translate(90px, -150px) scale(1.15);
+    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
   }
 }
 
 @keyframes morph3 {
   0% {
-    transform: translate3d(0px, 0px, 0) scale(1);
+    transform: translate(0px, 0px) scale(1);
+    border-radius: 50% 50% 50% 50%;
   }
 
   50% {
-    transform: translate3d(90px, -90px, 0) scale(1.18);
+    transform: translate(120px, -130px) scale(1.25);
+    border-radius: 30% 70% 70% 30% / 50% 30% 70% 50%;
   }
 
   100% {
-    transform: translate3d(-80px, 75px, 0) scale(0.9);
+    transform: translate(-100px, 100px) scale(0.9);
+    border-radius: 50% 50% 50% 50%;
   }
 }
 
@@ -418,90 +418,131 @@ body::after {
 }
 
 /* ========================================================================= */
-/* DYNAMIC THEMES: WATERCOLOR & DASHBOARD */
+/* ========================================================================= */
+/* DYNAMIC THEMES: LIGHT MODE (STRIPE PASTEL MESH) & DARK MODE (DASHBOARD)   */
 /* ========================================================================= */
 
-/* Watercolor Theme (Light Mode) */
+/* Light Mode Base */
 body.theme-watercolor {
-  background-color: #eef2f6 !important;
-  /* Bright off-white base */
+  background-color: #f8fafc !important;
   background-image: none !important;
-  color: #0f172a !important;
-  /* Charcoal text */
+  color: #334155 !important;
 }
 
-/* Realistic Multi-Layer Volumetric Smoke Animations */
-@keyframes smokeLayer1 {
+/* Living Liquid Pastel Mesh Orbs (Stripe Style) - Synced with Dark Mode Speed */
+.light-mesh-orb-1 {
+  position: fixed;
+  top: -8%;
+  left: -8%;
+  width: 52vw;
+  height: 52vw;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.45) 0%, rgba(56, 189, 248, 0.2) 50%, transparent 75%);
+  filter: blur(70px);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  animation: lightMeshMorph1 3.5s ease-in-out infinite alternate;
+}
+
+.light-mesh-orb-2 {
+  position: fixed;
+  bottom: -6%;
+  right: -6%;
+  width: 56vw;
+  height: 56vw;
+  background: radial-gradient(circle, rgba(251, 146, 60, 0.4) 0%, rgba(244, 114, 182, 0.2) 50%, transparent 75%);
+  filter: blur(80px);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  animation: lightMeshMorph2 4.5s ease-in-out infinite alternate;
+}
+
+.light-mesh-orb-3 {
+  position: fixed;
+  top: 18%;
+  right: 12%;
+  width: 48vw;
+  height: 48vw;
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.38) 0%, rgba(45, 212, 191, 0.18) 50%, transparent 75%);
+  filter: blur(70px);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  animation: lightMeshMorph3 4.0s ease-in-out infinite alternate;
+}
+
+.light-mesh-orb-4 {
+  position: fixed;
+  bottom: 18%;
+  left: 8%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.4) 0%, rgba(192, 132, 252, 0.2) 50%, transparent 75%);
+  filter: blur(75px);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  animation: lightMeshMorph4 3.8s ease-in-out infinite alternate;
+}
+
+@keyframes lightMeshMorph1 {
   0% {
-    transform: scale(1.05) translate(0px, 0px) rotate(0deg);
-    filter: blur(2px);
-    opacity: 0.85;
+    transform: translate3d(0px, 0px, 0) scale(1);
   }
-
-  33% {
-    transform: scale(1.15) translate(-25px, 15px) rotate(1.5deg);
-    filter: blur(5px);
-    opacity: 0.95;
+  50% {
+    transform: translate3d(90px, 70px, 0) scale(1.12);
   }
-
-  66% {
-    transform: scale(1.08) translate(20px, -20px) rotate(-1deg);
-    filter: blur(3px);
-    opacity: 0.75;
-  }
-
   100% {
-    transform: scale(1.05) translate(0px, 0px) rotate(0deg);
-    filter: blur(2px);
-    opacity: 0.85;
+    transform: translate3d(-80px, 100px, 0) scale(0.92);
   }
 }
 
-@keyframes smokeLayer2 {
+@keyframes lightMeshMorph2 {
   0% {
-    transform: scale(1.1) translate(0px, 0px) rotate(0deg);
-    filter: blur(6px);
-    opacity: 0.55;
+    transform: translate3d(0px, 0px, 0) scale(1);
   }
-
   50% {
-    transform: scale(1.22) translate(30px, -25px) rotate(-2deg);
-    filter: blur(10px);
-    opacity: 0.75;
+    transform: translate3d(-100px, -80px, 0) scale(1.15);
   }
-
   100% {
-    transform: scale(1.1) translate(0px, 0px) rotate(0deg);
-    filter: blur(6px);
-    opacity: 0.55;
+    transform: translate3d(80px, -100px, 0) scale(0.9);
   }
 }
 
-@keyframes smokePulseSlow {
-
-  0%,
-  100% {
-    opacity: 0.7;
-    filter: brightness(0.95) contrast(1.1);
+@keyframes lightMeshMorph3 {
+  0% {
+    transform: translate3d(0px, 0px, 0) scale(1);
   }
-
   50% {
-    opacity: 0.95;
-    filter: brightness(1.08) contrast(1.2);
+    transform: translate3d(-90px, 90px, 0) scale(1.1);
+  }
+  100% {
+    transform: translate3d(70px, -70px, 0) scale(0.95);
   }
 }
 
-.smoke-layer-base {
-  animation: smokeLayer1 22s ease-in-out infinite, smokePulseSlow 14s ease-in-out infinite;
-  will-change: transform, filter, opacity;
+@keyframes lightMeshMorph4 {
+  0% {
+    transform: translate3d(0px, 0px, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(100px, -90px, 0) scale(1.12);
+  }
+  100% {
+    transform: translate3d(-70px, 80px, 0) scale(0.92);
+  }
 }
 
-.smoke-layer-overlay {
-  animation: smokeLayer2 30s ease-in-out infinite;
-  will-change: transform, filter, opacity;
-}
-
-/* Light / Watercolor Mode Typography: Matches Dark Mode Colors and Gradients */
+/* Light Mode Typography: High-Contrast Obsidian & Refined Charcoal */
 body.theme-watercolor h1,
 body.theme-watercolor h2,
 body.theme-watercolor h3,
@@ -509,87 +550,222 @@ body.theme-watercolor h4,
 body.theme-watercolor h5,
 body.theme-watercolor h6,
 body.theme-watercolor .text-white {
-  color: #ffffff !important;
+  color: #0f172a !important;
 }
 
-/* Retain vibrant gradient on Name in Watercolor mode */
+/* Vibrant Deep Cyan to Royal Blue Name Gradient */
 body.theme-watercolor .bg-clip-text {
-  filter: none !important;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 40%, #4338ca 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
 }
 
+/* Body text & paragraph styling in Light Mode */
 body.theme-watercolor p,
 body.theme-watercolor li,
 body.theme-watercolor .text-slate-300 {
-  color: #cbd5e1 !important;
+  color: #334155 !important;
 }
 
 body.theme-watercolor .text-slate-400 {
-  color: #94a3b8 !important;
+  color: #475569 !important;
 }
 
 body.theme-watercolor .text-slate-500 {
   color: #64748b !important;
 }
 
-/* Availability Badge & Job Title in Watercolor mode */
+/* Availability Badge & Subtitle Pills in Light Mode */
 body.theme-watercolor .bg-cyan-500\/10,
 body.theme-watercolor .bg-cyan-500\/5 {
-  background-color: rgba(6, 182, 212, 0.1) !important;
-  border-color: rgba(6, 182, 212, 0.2) !important;
+  background-color: rgba(2, 132, 199, 0.08) !important;
+  border-color: rgba(2, 132, 199, 0.25) !important;
 }
 
 body.theme-watercolor .text-cyan-400,
 body.theme-watercolor .text-cyan-300 {
-  color: #22d3ee !important;
+  color: #0284c7 !important;
 }
 
-/* Glass cards light mode styling */
+/* Frosted Pearl White Glass Cards */
 body.theme-watercolor .glass-card,
-body.theme-watercolor .cockpit-card {
-  background: rgba(15, 23, 42, 0.75) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5) !important;
+body.theme-watercolor .cockpit-card,
+body.theme-watercolor .editorial-card {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(226, 232, 240, 0.95) !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 0 1px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.theme-watercolor .glass-card:hover,
+body.theme-watercolor .cockpit-card:hover,
+body.theme-watercolor .editorial-card:hover {
+  border-color: rgba(2, 132, 199, 0.35) !important;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 0 20px 2px rgba(2, 132, 199, 0.12) !important;
 }
 
 body.theme-watercolor .glass-card h3,
 body.theme-watercolor .glass-card h4,
-body.theme-watercolor .glass-card span,
 body.theme-watercolor .cockpit-card h3,
-body.theme-watercolor .cockpit-card h4,
-body.theme-watercolor .cockpit-card span {
+body.theme-watercolor .cockpit-card h4 {
+  color: #0f172a !important;
+}
+
+/* Secondary Button ("Contact Me") */
+body.theme-watercolor a[href="#contact"] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.theme-watercolor a[href="#contact"]:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #0284c7 !important;
+}
+
+/* Navbar / Header Navigation Capsule */
+body.theme-watercolor header nav,
+body.theme-watercolor header .backdrop-blur-md {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(226, 232, 240, 0.95) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.theme-watercolor header nav a {
+  color: #475569 !important;
+}
+
+body.theme-watercolor header nav a:hover {
+  color: #0f172a !important;
+  background-color: rgba(241, 245, 249, 0.8) !important;
+}
+
+body.theme-watercolor header nav a.bg-white {
+  background-color: #0f172a !important;
   color: #ffffff !important;
 }
 
-/* Input fields contrast inside contact form */
+/* Identity Badge (JM / JERWIN MASAGCA) */
+body.theme-watercolor header a[href="/#home"] {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(226, 232, 240, 0.95) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-watercolor header a[href="/#home"] span {
+  color: #0f172a !important;
+}
+
+body.theme-watercolor header a[href="/#home"] span.text-cyan-400 {
+  color: #0284c7 !important;
+}
+
+/* Theme Toggle button in Light mode */
+body.theme-watercolor header button {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(226, 232, 240, 0.95) !important;
+  color: #334155 !important;
+}
+
+/* Filter Tag Buttons in Projects Section */
+body.theme-watercolor button.bg-white\/5 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+body.theme-watercolor button.bg-white\/5:hover {
+  background-color: #f8fafc !important;
+  border-color: #0284c7 !important;
+  color: #0f172a !important;
+}
+
+/* Profile Card in Light Mode */
+body.theme-watercolor .profile-card-container {
+  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.08), 0 0 20px 0px rgba(2, 132, 199, 0.15) !important;
+}
+
+body.theme-watercolor .profile-card-container > div:last-child {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(226, 232, 240, 0.9) !important;
+}
+
+/* Contact Form Inputs */
 body.theme-watercolor input,
 body.theme-watercolor textarea {
-  background-color: rgba(15, 23, 42, 0.75) !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
-  color: #ffffff !important;
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02) inset !important;
 }
 
 body.theme-watercolor input::placeholder,
 body.theme-watercolor textarea::placeholder {
-  color: #64748b !important;
-}
-
-/* Admin Portal & Global Cards Contrast in Watercolor / Light Mode */
-body.theme-watercolor .admin-card,
-body.theme-watercolor .glass {
-  background: rgba(15, 23, 42, 0.85) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-body.theme-watercolor label {
   color: #94a3b8 !important;
 }
 
-/* Hide all horizontal section dividers in watercolor theme */
+body.theme-watercolor input:focus,
+body.theme-watercolor textarea:focus {
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15) !important;
+}
+
+body.theme-watercolor label {
+  color: #475569 !important;
+}
+
+/* Section divider borders */
 body.theme-watercolor section {
-  border-top: none !important;
-  border-top-color: transparent !important;
+  border-top-color: rgba(226, 232, 240, 0.8) !important;
+}
+
+/* Project Cards & Articles in Light Mode */
+body.theme-watercolor article.glass-card {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(226, 232, 240, 0.95) !important;
+}
+
+body.theme-watercolor article h3 {
+  color: #0f172a !important;
+}
+
+body.theme-watercolor article p {
+  color: #334155 !important;
+}
+
+body.theme-watercolor article a {
+  color: #475569 !important;
+}
+
+body.theme-watercolor article a:hover {
+  color: #0284c7 !important;
+}
+
+body.theme-watercolor article .border-t {
+  border-top-color: rgba(226, 232, 240, 0.85) !important;
+}
+
+/* 3D Robot Companion frame in Light Mode */
+body.theme-watercolor #workspace .relative.rounded-3xl {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(226, 232, 240, 0.9) !important;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.theme-watercolor #workspace .backdrop-blur-md {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(2, 132, 199, 0.3) !important;
+  color: #0284c7 !important;
+}
+
+/* Footer in Light Mode */
+body.theme-watercolor footer {
+  background-color: rgba(248, 250, 252, 0.85) !important;
+  border-top-color: rgba(226, 232, 240, 0.9) !important;
+  color: #64748b !important;
 }
 
 /* Hide dashboard-only layouts in watercolor theme */

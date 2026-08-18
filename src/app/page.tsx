@@ -300,40 +300,20 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen text-white bg-transparent font-sans selection:bg-cyan-500/20 relative overflow-hidden">
 
-      {/* Dynamic Moving Volumetric Smoke Canvas with Fluid Turbulence */}
+      {/* Living Liquid Pastel Mesh Canvas (Light Mode / Stripe Style) */}
       {isWatercolor && (
-        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none bg-[#0a1120]">
-          {/* SVG Displacement Filter for Fluid Organic Dissolve */}
-          <svg className="hidden" aria-hidden="true">
-            <defs>
-              <filter id="smokeTurbulence" x="-20%" y="-20%" width="140%" height="140%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="4" result="noise" seed="42">
-                  <animate attributeName="baseFrequency" dur="25s" values="0.012 0.018; 0.02 0.012; 0.012 0.018" repeatCount="indefinite" />
-                </feTurbulence>
-                <feDisplacementMap in="SourceGraphic" in2="noise" scale="35" xChannelSelector="R" yChannelSelector="G" />
-              </filter>
-            </defs>
-          </svg>
+        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none bg-[#f8fafc]">
+          {/* Subtle architectural dot grid texture */}
+          <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] opacity-45" />
 
-          {/* Background Layer 1: Volumetric base smoke with fluid displacement */}
-          <div
-            className="w-[125%] h-[125%] absolute -top-[12%] -left-[12%] bg-cover bg-center smoke-layer-base opacity-85"
-            style={{
-              backgroundImage: 'url("/watercolor_background.png")',
-              filter: 'url(#smokeTurbulence)',
-            }}
-          />
+          {/* Living Pastel Gradient Mesh Orbs */}
+          <div className="light-mesh-orb-1" />
+          <div className="light-mesh-orb-2" />
+          <div className="light-mesh-orb-3" />
+          <div className="light-mesh-orb-4" />
 
-          {/* Background Layer 2: Counter-drifting soft atmospheric plume */}
-          <div
-            className="w-[130%] h-[130%] absolute -top-[15%] -left-[15%] bg-cover bg-center smoke-layer-overlay opacity-60 mix-blend-screen"
-            style={{
-              backgroundImage: 'url("/watercolor_background.png")',
-            }}
-          />
-
-          {/* Vignette depth darkening */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#030712]/80 via-transparent to-[#030712]/50 pointer-events-none" />
+          {/* Soft ambient lighting diffusion */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#f8fafc]/50 via-transparent to-[#f8fafc]/30 pointer-events-none" />
         </div>
       )}
 
@@ -399,17 +379,30 @@ export default function Home() {
 
                 {/* Action Buttons */}
                 <ScrollReveal variant="fadeInUp" delay={400}>
-                  <div className="flex flex-wrap gap-3 pt-1">
+                  {/* Actions / CTA Buttons */}
+                  <div className="flex flex-wrap items-center gap-4 pt-2">
                     <a
                       href="#projects"
-                      className="px-5 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-semibold text-sm transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center gap-2"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.dispatchEvent(new CustomEvent("nav-link-clicked"));
+                        document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+                        window.history.pushState(null, "", "#projects");
+                      }}
+                      className="px-5 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-semibold text-sm transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center gap-2 cursor-pointer"
                     >
                       <span>Explore Work</span>
                       <ChevronRight className="w-4 h-4" />
                     </a>
                     <a
                       href="#contact"
-                      className="px-5 py-2.5 rounded-xl border border-white/10 hover:border-cyan-400/40 bg-white/5 hover:bg-cyan-500/10 text-slate-200 hover:text-white font-medium text-sm transition-all duration-300 flex items-center gap-2"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.dispatchEvent(new CustomEvent("nav-link-clicked"));
+                        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                        window.history.pushState(null, "", "#contact");
+                      }}
+                      className="px-5 py-2.5 rounded-xl border border-white/10 hover:border-cyan-400/40 bg-white/5 hover:bg-cyan-500/10 text-slate-200 hover:text-white font-medium text-sm transition-all duration-300 flex items-center gap-2 cursor-pointer"
                     >
                       Contact Me
                     </a>
@@ -796,7 +789,7 @@ export default function Home() {
                 <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest bg-cyan-500/10 border border-cyan-500/15 px-3 py-1 rounded-full">
                   Interactive Centerpiece
                 </span>
-                <h2 className="font-syne text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white whitespace-nowrap">
+                <h2 className="font-syne text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white">
                   3D Robot Companion
                 </h2>
                 <p className="text-sm md:text-base text-slate-400 leading-relaxed max-w-2xl mx-auto">

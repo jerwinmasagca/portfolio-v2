@@ -70,6 +70,22 @@ export default function NavbarScrollSpy() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("nav-link-clicked"));
+      if (window.location.pathname === "/") {
+        e.preventDefault();
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+          window.history.pushState(null, "", `#${targetId}`);
+          setActiveSection(targetId);
+        }
+      }
+    }
+    setIsMobileOpen(false);
+  };
+
   const currentActiveItem = NAV_ITEMS.find((item) => item.id === activeSection) || NAV_ITEMS[0];
 
   return (
@@ -83,17 +99,18 @@ export default function NavbarScrollSpy() {
             const isActive = activeSection === item.id;
 
             return (
-              <Link
+              <a
                 key={item.id}
                 href={item.href}
-                className={`rounded-full px-4.5 py-2 text-sm font-bold transition-all duration-300 ${
+                onClick={(e) => handleNavClick(e, item.id)}
+                className={`rounded-full px-4.5 py-2 text-sm font-bold transition-all duration-300 cursor-pointer ${
                   isActive
                     ? "bg-white text-slate-950 shadow-md scale-105"
                     : "text-slate-300 hover:text-white hover:bg-white/5"
                 }`}
               >
                 {item.label}
-              </Link>
+              </a>
             );
           })}
         </nav>
@@ -140,11 +157,11 @@ export default function NavbarScrollSpy() {
                 const IconComponent = item.icon;
 
                 return (
-                  <Link
+                  <a
                     key={item.id}
                     href={item.href}
-                    onClick={() => setIsMobileOpen(false)}
-                    className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                    onClick={(e) => handleNavClick(e, item.id)}
+                    className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
                       isActive
                         ? "bg-gradient-to-r from-cyan-500/20 to-sky-500/10 border border-cyan-400/30 text-white font-bold shadow-md"
                         : "text-slate-300 hover:text-white hover:bg-white/5"
@@ -158,7 +175,7 @@ export default function NavbarScrollSpy() {
                     {isActive && (
                       <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#38bdf8]" />
                     )}
-                  </Link>
+                  </a>
                 );
               })}
             </div>
