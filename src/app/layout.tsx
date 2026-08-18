@@ -18,8 +18,18 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "Jerwin Masagca | 3D Interactive Portfolio",
-  description: "A premium interactive portfolio featuring Spline 3D animations and Supabase integration.",
+  title: "Jerwin Masagca | Full-Stack Developer",
+  description: "Building practical applications across web and desktop, with a focus on backend systems, databases, and modern user experiences.",
+  openGraph: {
+    title: "Jerwin Masagca | Full-Stack Developer",
+    description: "Building practical applications across web and desktop, with a focus on backend systems, databases, and modern user experiences.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Jerwin Masagca | Full-Stack Developer",
+    description: "Building practical applications across web and desktop, with a focus on backend systems, databases, and modern user experiences.",
+  },
 };
 
 export default function RootLayout({
