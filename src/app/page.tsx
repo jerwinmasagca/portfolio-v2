@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Project, ProfileSettings, Experience, Education, Certification, Skill, supabase } from "@/lib/supabase";
 import SplineViewer from "@/components/SplineViewer";
 import ProjectCard from "@/components/ProjectCard";
@@ -119,14 +119,22 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
-  // Mouse movement tracker to feed CSS spotlight variables
+  // Mouse movement tracker to feed CSS spotlight variables (throttled to rAF)
   useEffect(() => {
+    let rafId: number | null = null;
     const handleMouseMove = (e: MouseEvent) => {
-      document.documentElement.style.setProperty("--mouse-x", `${e.clientX}px`);
-      document.documentElement.style.setProperty("--mouse-y", `${e.clientY}px`);
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        document.documentElement.style.setProperty("--mouse-x", `${e.clientX}px`);
+        document.documentElement.style.setProperty("--mouse-y", `${e.clientY}px`);
+        rafId = null;
+      });
     };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // Clock Update
@@ -148,72 +156,49 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      // Fetch Profile
-      try {
-        const { data, error } = await supabase
-          .from("profile_settings")
-          .select("*")
-          .limit(1)
-          .maybeSingle();
-        if (error) throw error;
-        if (data) setProfile(data);
-      } catch (err) {
-        console.warn("Failed to load profile, using fallback", err);
+      // Fire all queries in parallel for faster load
+      const [profileResult, projectsResult, experiencesResult, educationResult, skillsResult] = await Promise.allSettled([
+        supabase.from("profile_settings").select("*").limit(1).maybeSingle(),
+        supabase.from("projects").select("*").order("created_at", { ascending: false }),
+        supabase.from("experiences").select("*").order("created_at", { ascending: true }),
+        supabase.from("education").select("*").order("created_at", { ascending: true }),
+        supabase.from("skills").select("*").order("created_at", { ascending: true }),
+      ]);
+
+      // Process Profile
+      if (profileResult.status === "fulfilled" && !profileResult.value.error && profileResult.value.data) {
+        setProfile(profileResult.value.data);
       }
 
-      // Fetch Projects
-      try {
-        const { data, error } = await supabase
-          .from("projects")
-          .select("*")
-          .order("created_at", { ascending: false });
-        if (error) throw error;
-        if (data && data.length > 0) setProjects(data);
-        else setProjects(FALLBACK_PROJECTS);
-      } catch (err) {
+      // Process Projects
+      if (projectsResult.status === "fulfilled" && !projectsResult.value.error && projectsResult.value.data?.length) {
+        setProjects(projectsResult.value.data);
+      } else {
         setProjects(FALLBACK_PROJECTS);
       }
 
-      // Fetch Experiences
-      try {
-        const { data, error } = await supabase
-          .from("experiences")
-          .select("*")
-          .order("created_at", { ascending: true });
-        if (error) throw error;
-        if (data && data.length > 0) setExperiences(data);
-        else setExperiences(FALLBACK_EXPERIENCES);
-      } catch (err) {
+      // Process Experiences
+      if (experiencesResult.status === "fulfilled" && !experiencesResult.value.error && experiencesResult.value.data?.length) {
+        setExperiences(experiencesResult.value.data);
+      } else {
         setExperiences(FALLBACK_EXPERIENCES);
       }
 
-      // Fetch Education
-      try {
-        const { data, error } = await supabase
-          .from("education")
-          .select("*")
-          .order("created_at", { ascending: true });
-        if (error) throw error;
-        if (data && data.length > 0) setEducationList(data);
-        else setEducationList(FALLBACK_EDUCATION);
-      } catch (err) {
+      // Process Education
+      if (educationResult.status === "fulfilled" && !educationResult.value.error && educationResult.value.data?.length) {
+        setEducationList(educationResult.value.data);
+      } else {
         setEducationList(FALLBACK_EDUCATION);
       }
 
-      // Fetch Skills
-      try {
-        const { data, error } = await supabase
-          .from("skills")
-          .select("*")
-          .order("created_at", { ascending: true });
-        if (error) throw error;
-        if (data && data.length > 0) setSkills(data);
-        else setSkills(FALLBACK_SKILLS);
-      } catch (err) {
+      // Process Skills
+      if (skillsResult.status === "fulfilled" && !skillsResult.value.error && skillsResult.value.data?.length) {
+        setSkills(skillsResult.value.data);
+      } else {
         setSkills(FALLBACK_SKILLS);
-      } finally {
-        setLoading(false);
       }
+
+      setLoading(false);
     }
     fetchData();
   }, []);

@@ -51,7 +51,7 @@ export default function ScrollReveal({
   return (
     <div
       ref={ref}
-      className={`scroll-reveal ${isVisible ? `scroll-reveal--visible scroll-reveal--${variant}` : "scroll-reveal--hidden"} ${className}`}
+      className={`scroll-reveal scroll-reveal--variant-${variant} ${isVisible ? `scroll-reveal--visible scroll-reveal--${variant}` : "scroll-reveal--hidden"} ${className}`}
       style={{
         transitionDelay: `${delay}ms`,
         transitionDuration: `${duration}ms`,

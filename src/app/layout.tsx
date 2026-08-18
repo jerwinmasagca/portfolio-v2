@@ -18,11 +18,14 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.jerwinmasagca.dev"),
   title: "Jerwin Masagca | Full-Stack Developer",
   description: "Building practical applications across web and desktop, with a focus on backend systems, databases, and modern user experiences.",
   openGraph: {
     title: "Jerwin Masagca | Full-Stack Developer",
     description: "Building practical applications across web and desktop, with a focus on backend systems, databases, and modern user experiences.",
+    url: "https://www.jerwinmasagca.dev",
+    siteName: "Jerwin Masagca Portfolio",
     type: "website",
   },
   twitter: {

@@ -144,7 +144,7 @@ body::after {
   inset: 0;
   background-image: radial-gradient(rgba(6, 182, 212, 0.04) 1px, transparent 0);
   background-size: 28px 28px;
-  animation: gridDrift 6s linear infinite;
+  animation: gridDrift 30s linear infinite;
   z-index: 0;
 }
 
@@ -153,7 +153,6 @@ body::after {
   inset: 0;
   background-image: radial-gradient(rgba(6, 182, 212, 0.45) 1.5px, transparent 0);
   background-size: 28px 28px;
-  animation: gridDrift 6s linear infinite;
   z-index: 1;
   /* Mask it around the cursor position with a radial gradient */
   mask-image: radial-gradient(circle 160px at var(--mouse-x, 0px) var(--mouse-y, 0px), black 10%, rgba(0, 0, 0, 0.45) 50%, transparent 100%);
@@ -184,89 +183,74 @@ body::after {
   position: fixed;
   top: -10%;
   left: -10%;
-  width: 55vw;
-  height: 55vw;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(8, 145, 178, 0.12) 50%, transparent 80%);
-  filter: blur(85px);
+  width: 35vw;
+  height: 35vw;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.2) 0%, rgba(8, 145, 178, 0.08) 50%, transparent 80%);
+  filter: blur(80px);
+  border-radius: 50%;
   z-index: 0;
   pointer-events: none;
-  animation: morph1 3.5s ease-in-out infinite alternate;
+  will-change: transform;
+  animation: morph1 20s ease-in-out infinite alternate;
 }
 
 .glow-orb-2 {
   position: fixed;
   bottom: -15%;
   right: -10%;
-  width: 65vw;
-  height: 65vw;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.28) 0%, rgba(79, 70, 229, 0.08) 50%, transparent 80%);
-  filter: blur(95px);
+  width: 45vw;
+  height: 45vw;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(79, 70, 229, 0.06) 50%, transparent 80%);
+  filter: blur(80px);
+  border-radius: 50%;
   z-index: 0;
   pointer-events: none;
-  animation: morph2 4.5s ease-in-out infinite alternate;
+  will-change: transform;
+  animation: morph2 25s ease-in-out infinite alternate;
 }
 
 .glow-orb-3 {
   position: fixed;
   top: 25%;
   left: 15%;
-  width: 60vw;
-  height: 60vw;
-  background: radial-gradient(circle, rgba(236, 72, 153, 0.24) 0%, rgba(219, 39, 119, 0.06) 50%, transparent 80%);
-  filter: blur(90px);
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, rgba(219, 39, 119, 0.04) 50%, transparent 80%);
+  filter: blur(80px);
+  border-radius: 50%;
   z-index: 0;
   pointer-events: none;
-  animation: morph3 4s ease-in-out infinite alternate;
+  will-change: transform;
+  animation: morph3 18s ease-in-out infinite alternate;
 }
 
 @keyframes morph1 {
   0% {
     transform: translate(0px, 0px) scale(1);
-    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
-  }
-
-  50% {
-    transform: translate(150px, 120px) scale(1.2);
-    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
   }
 
   100% {
-    transform: translate(-100px, 90px) scale(0.9);
-    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+    transform: translate(-80px, 60px) scale(1.08);
   }
 }
 
 @keyframes morph2 {
   0% {
     transform: translate(0px, 0px) scale(1);
-    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
-  }
-
-  50% {
-    transform: translate(-180px, -90px) scale(0.8);
-    border-radius: 40% 60% 30% 70% / 40% 50% 50% 60%;
   }
 
   100% {
-    transform: translate(90px, -150px) scale(1.15);
-    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
+    transform: translate(60px, -80px) scale(1.05);
   }
 }
 
 @keyframes morph3 {
   0% {
     transform: translate(0px, 0px) scale(1);
-    border-radius: 50% 50% 50% 50%;
-  }
-
-  50% {
-    transform: translate(120px, -130px) scale(1.25);
-    border-radius: 30% 70% 70% 30% / 50% 30% 70% 50%;
   }
 
   100% {
-    transform: translate(-100px, 100px) scale(0.9);
-    border-radius: 50% 50% 50% 50%;
+    transform: translate(-60px, 50px) scale(0.95);
   }
 }
 
@@ -328,16 +312,18 @@ body::after {
 }
 
 .profile-card-container {
-  animation: floatGentle 5s ease-in-out infinite, profilePulseGlow 4s ease-in-out infinite;
+  animation: floatGentle 8s ease-in-out infinite;
+  box-shadow: 0 0 35px -5px rgba(6, 182, 212, 0.25), 0 0 15px 0px rgba(99, 102, 241, 0.2);
 }
 
 .profile-border-glow {
   background: conic-gradient(from 0deg, #06b6d4, #6366f1, #d946ef, #06b6d4);
-  animation: profileGradientRotate 4s linear infinite;
+  animation: profileGradientRotate 6s linear infinite;
+  inset: -50% !important;
 }
 
 .profile-scanline {
-  animation: profileScanline 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: profileScanline 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 /* Clean Editorial Visual Elements */
@@ -619,45 +605,49 @@ body.theme-dashboard {
   opacity: 0;
 }
 
-/* fadeInUp: elements slide up from 40px below */
-.scroll-reveal--hidden:not(.scroll-reveal--visible) {
+/* Hidden state: variant-specific initial transforms */
+.scroll-reveal--hidden.scroll-reveal--variant-fadeInUp {
   transform: translateY(40px);
 }
 
-.scroll-reveal--visible.scroll-reveal--fadeInUp {
-  opacity: 1;
-  transform: translateY(0);
+.scroll-reveal--hidden.scroll-reveal--variant-fadeInDown {
+  transform: translateY(-40px);
 }
 
-/* fadeInDown: elements slide down from 40px above */
+.scroll-reveal--hidden.scroll-reveal--variant-fadeIn {
+  transform: none;
+}
+
+.scroll-reveal--hidden.scroll-reveal--variant-slideInLeft {
+  transform: translateX(-60px);
+}
+
+.scroll-reveal--hidden.scroll-reveal--variant-slideInRight {
+  transform: translateX(60px);
+}
+
+.scroll-reveal--hidden.scroll-reveal--variant-zoomIn {
+  transform: scale(0.85);
+}
+
+/* Visible state: all variants resolve to identity transform */
+.scroll-reveal--visible.scroll-reveal--fadeInUp,
 .scroll-reveal--visible.scroll-reveal--fadeInDown {
   opacity: 1;
   transform: translateY(0);
 }
 
-.scroll-reveal--hidden:has(~ .scroll-reveal--fadeInDown) {
-  transform: translateY(-40px);
-}
-
-/* fadeIn: pure opacity fade */
 .scroll-reveal--visible.scroll-reveal--fadeIn {
   opacity: 1;
   transform: none;
 }
 
-/* slideInLeft */
-.scroll-reveal--visible.scroll-reveal--slideInLeft {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* slideInRight */
+.scroll-reveal--visible.scroll-reveal--slideInLeft,
 .scroll-reveal--visible.scroll-reveal--slideInRight {
   opacity: 1;
   transform: translateX(0);
 }
 
-/* zoomIn */
 .scroll-reveal--visible.scroll-reveal--zoomIn {
   opacity: 1;
   transform: scale(1);
