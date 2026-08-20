@@ -167,7 +167,13 @@ export default function Home() {
 
       // Process Profile
       if (profileResult.status === "fulfilled" && !profileResult.value.error && profileResult.value.data) {
-        setProfile(profileResult.value.data);
+        setProfile((prev) => ({
+          ...prev,
+          ...profileResult.value.data,
+          name: profileResult.value.data.name?.trim() || prev.name || "Jerwin B. Masagca",
+          title: profileResult.value.data.title?.trim() || prev.title || "Full-Stack Developer",
+          bio: profileResult.value.data.bio?.trim() || prev.bio,
+        }));
       }
 
       // Process Projects
@@ -358,7 +364,7 @@ export default function Home() {
                   <h1 className="font-syne text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-none text-white">
                     Hi, I'm{" "}
                     <span className="bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400 bg-clip-text text-transparent">
-                      {profile.name}
+                      {profile.name || "Jerwin B. Masagca"}
                     </span>
                   </h1>
                 </ScrollReveal>
@@ -462,7 +468,7 @@ export default function Home() {
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
                             <h3 className="font-syne text-sm font-bold text-white tracking-wide">
-                              {profile.name}
+                              {profile.name || "Jerwin B. Masagca"}
                             </h3>
                             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
                           </div>
@@ -1003,7 +1009,7 @@ export default function Home() {
         {/* Footer info branding */}
         <footer className="py-8 border-t border-white/5 bg-slate-950/20 text-center text-slate-500 font-mono text-[10px] uppercase tracking-wider">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-            <span>© 2026 {profile.name} // ALL SYSTEM NODE RIGHTS RESERVED</span>
+            <span>© 2026 {profile.name || "Jerwin B. Masagca"} // ALL SYSTEM NODE RIGHTS RESERVED</span>
             <span>BUILT WITH NEXT.JS & SUPABASE</span>
           </div>
         </footer>
