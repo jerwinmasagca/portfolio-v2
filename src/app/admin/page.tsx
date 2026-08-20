@@ -1439,24 +1439,24 @@ export default function AdminPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Spline Scene Link</label>
-              <input type="url" required value={profileForm.spline_url} onChange={e => setProfileForm({ ...profileForm, spline_url: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" />
+              <input type="url" required value={profileForm.spline_url} onChange={e => setProfileForm({ ...profileForm, spline_url: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-xs" />
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Resume (PDF Upload)</label>
-              <div className="flex gap-4">
-                <input type="url" value={profileForm.resume_url || ""} onChange={e => setProfileForm({ ...profileForm, resume_url: e.target.value })} placeholder="Enter resume URL..." className="flex-grow bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" />
-                <label htmlFor="resume-upload" className="flex items-center justify-center p-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 cursor-pointer text-white transition-all">
-                  <Upload className="h-5 w-5" />
+              <div className="flex items-center gap-2">
+                <input type="url" value={profileForm.resume_url || ""} onChange={e => setProfileForm({ ...profileForm, resume_url: e.target.value })} placeholder="Enter or upload PDF..." className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-xl px-3 py-3 text-white focus:outline-none focus:border-indigo-500 text-xs truncate" />
+                <label htmlFor="resume-upload" className="shrink-0 flex items-center justify-center p-3 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 cursor-pointer text-indigo-300 transition-all" title="Upload new Resume PDF">
+                  <Upload className="h-4 w-4" />
                 </label>
                 <input id="resume-upload" type="file" accept=".pdf" onChange={e => handleFileUpload(e, "resume_url")} className="hidden" style={{ display: 'none' }} disabled={uploading} />
               </div>
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Profile Photo (Avatar Upload)</label>
-              <div className="flex gap-4">
-                <input type="url" value={profileForm.avatar_url || ""} onChange={e => setProfileForm({ ...profileForm, avatar_url: e.target.value })} placeholder="Enter image URL..." className="flex-grow bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" />
-                <label htmlFor="avatar-upload" className="flex items-center justify-center p-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 cursor-pointer text-white transition-all">
-                  <Upload className="h-5 w-5" />
+              <div className="flex items-center gap-2">
+                <input type="url" value={profileForm.avatar_url || ""} onChange={e => setProfileForm({ ...profileForm, avatar_url: e.target.value })} placeholder="Enter or upload image..." className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-xl px-3 py-3 text-white focus:outline-none focus:border-indigo-500 text-xs truncate" />
+                <label htmlFor="avatar-upload" className="shrink-0 flex items-center justify-center p-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 cursor-pointer text-cyan-300 transition-all" title="Upload new Avatar photo">
+                  <Upload className="h-4 w-4" />
                 </label>
                 <input id="avatar-upload" type="file" accept="image/*" onChange={e => handleAvatarSelect(e)} className="hidden" style={{ display: 'none' }} disabled={uploading} />
               </div>
