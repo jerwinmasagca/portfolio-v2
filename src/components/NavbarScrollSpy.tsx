@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { ChevronDown, Menu, X, Home, Briefcase, FileText, Cpu, Mail, Sparkles } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/BrandIcons";
+import { supabase } from "@/lib/supabase";
 
 interface NavItem {
   id: string;
@@ -23,7 +24,50 @@ const NAV_ITEMS: NavItem[] = [
 export default function NavbarScrollSpy() {
   const [activeSection, setActiveSection] = useState<string>("home");
   const [isMobileOpen, setIsMobileOpen] = useState<boolean>(false);
+  const [resumeUrl, setResumeUrl] = useState<string>("https://srlbrzvdhxigwytveqdh.supabase.co/storage/v1/object/public/portfolio/uploads/b8il1h0bz1r.pdf");
+  const [githubUrl, setGithubUrl] = useState<string>("https://github.com/jerwinmasagca");
+  const [linkedinUrl, setLinkedinUrl] = useState<string>("https://www.linkedin.com/in/jerwin-masagca-889815340");
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Fetch dynamic profile settings (updates automatically if uploaded in admin)
+  const fetchProfileSettings = async () => {
+    try {
+      if (typeof window !== "undefined") {
+        const simProfileStr = localStorage.getItem("sim_profile");
+        if (simProfileStr) {
+          try {
+            const parsed = JSON.parse(simProfileStr);
+            if (parsed.resume_url) setResumeUrl(parsed.resume_url);
+            if (parsed.github) setGithubUrl(parsed.github);
+            if (parsed.linkedin) setLinkedinUrl(parsed.linkedin);
+          } catch (e) {}
+        }
+      }
+
+      const { data, error } = await supabase
+        .from("profile_settings")
+        .select("resume_url, github, linkedin")
+        .limit(1)
+        .maybeSingle();
+
+      if (!error && data) {
+        if (data.resume_url) setResumeUrl(data.resume_url);
+        if (data.github) setGithubUrl(data.github);
+        if (data.linkedin) setLinkedinUrl(data.linkedin);
+      }
+    } catch (err) {
+      console.warn("Could not fetch profile settings for mobile nav:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfileSettings();
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "sim_profile") fetchProfileSettings();
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -183,7 +227,7 @@ export default function NavbarScrollSpy() {
             {/* Quick Actions at bottom of mobile menu */}
             <div className="pt-2 border-t border-white/10 flex items-center justify-between px-1">
               <a
-                href="https://srlbrzvdhxigwytveqdh.supabase.co/storage/v1/object/public/portfolio/uploads/b8il1h0bz1r.pdf"
+                href={resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-mono font-semibold text-slate-300 hover:text-white transition-all border border-white/5"
@@ -194,7 +238,7 @@ export default function NavbarScrollSpy() {
 
               <div className="flex items-center gap-2">
                 <a
-                  href="https://github.com/jerwinmasagca"
+                  href={githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-cyan-400 transition-all border border-white/5"
@@ -203,7 +247,7 @@ export default function NavbarScrollSpy() {
                   <GithubIcon className="w-4 h-4 fill-current" />
                 </a>
                 <a
-                  href="https://www.linkedin.com/in/jerwin-masagca-889815340"
+                  href={linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-cyan-400 transition-all border border-white/5"
