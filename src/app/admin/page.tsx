@@ -9,6 +9,7 @@ import {
   Upload, User, Briefcase, FileText, Link, Mail, Award, BookOpen, Key, Loader2, Edit2, X
 } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/BrandIcons";
+import { CyberAlert, Toast } from "@/lib/sweetalert";
 
 type TabType = "projects" | "profile" | "experience" | "education" | "skills" | "certifications" | "messages";
 
@@ -481,12 +482,18 @@ export default function AdminPage() {
           const resultUrl = reader.result as string;
           if (targetField === "image_url") {
             setProjectForm((prev) => ({ ...prev, image_url: resultUrl }));
+            CyberAlert.success("Image Loaded!", "Local image loaded into project form.");
           } else if (targetField === "video_url") {
             setProjectForm((prev) => ({ ...prev, video_url: resultUrl }));
+            CyberAlert.success("Video Loaded!", "Local video loaded into project form.");
           } else if (targetField === "avatar_url") {
             setProfileForm((prev) => ({ ...prev, avatar_url: resultUrl }));
+            CyberAlert.success("Avatar Loaded!", "Profile photo loaded. Click 'Save Settings' to apply.");
           } else {
-            setProfileForm((prev) => ({ ...prev, resume_url: resultUrl }));
+            const updated = { ...profileForm, resume_url: resultUrl };
+            setProfileForm(updated);
+            localStorage.setItem("sim_profile", JSON.stringify(updated));
+            CyberAlert.success("Resume Replaced!", "New resume loaded into profile.");
           }
           setSuccess("File loaded successfully (Local Simulator)!");
           setUploading(false);
@@ -499,6 +506,7 @@ export default function AdminPage() {
         reader.readAsDataURL(file);
       } catch (err: any) {
         setError(`Upload failed: ${err.message || err}`);
+        CyberAlert.error("Upload Failed", err.message || err);
         setUploading(false);
         setUploadingField(null);
         setUploadProgress("");
@@ -513,7 +521,10 @@ export default function AdminPage() {
 
       const { error: uploadError } = await supabase.storage
         .from("portfolio")
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
 
       if (uploadError) throw uploadError;
 
@@ -524,25 +535,47 @@ export default function AdminPage() {
 
       if (targetField === "image_url") {
         setProjectForm((prev) => ({ ...prev, image_url: url }));
+        CyberAlert.success("Image Uploaded!", "Project image uploaded successfully.");
       } else if (targetField === "video_url") {
         setProjectForm((prev) => ({ ...prev, video_url: url }));
+        CyberAlert.success("Video Uploaded!", "Project video uploaded successfully.");
       } else if (targetField === "avatar_url") {
         setProfileForm((prev) => ({ ...prev, avatar_url: url }));
+        CyberAlert.success("Avatar Uploaded!", "Profile photo uploaded. Click 'Save Settings' to apply.");
       } else {
-        setProfileForm((prev) => ({ ...prev, resume_url: url }));
+        const updatedProfile = { ...profileForm, resume_url: url };
+        setProfileForm(updatedProfile);
+        
+        // Auto-save resume URL to Supabase and localStorage immediately
+        try {
+          const { data: existing } = await supabase.from("profile_settings").select("id").limit(1).maybeSingle();
+          if (existing) {
+            await supabase.from("profile_settings").update({ resume_url: url }).eq("id", existing.id);
+          } else {
+            await supabase.from("profile_settings").insert([updatedProfile]);
+          }
+          localStorage.setItem("sim_profile", JSON.stringify(updatedProfile));
+        } catch (saveErr) {
+          console.warn("Auto-save resume error:", saveErr);
+        }
+
+        CyberAlert.success("Resume Replaced & Saved!", "Your new resume has replaced the previous one across the entire portfolio.");
       }
-      setSuccess("File uploaded successfully! Click 'Add Project' or 'Save Settings' to save.");
+      setSuccess("File uploaded successfully!");
     } catch (err: any) {
       console.error("Upload handler error:", err);
-      if (err.message && err.message.includes("exceeded the maximum allowed size")) {
-        setError("File is too large for your Supabase bucket limit. Please increase the upload limit in your Supabase Dashboard (Storage > portfolio > Edit Bucket > File size limit) or compress the video to under 50MB.");
-      } else {
-        setError(`Upload failed: ${err.message || err}`);
-      }
+      const msg = err.message && err.message.includes("exceeded the maximum allowed size")
+        ? "File is too large for your Supabase bucket limit. Please increase the upload limit or compress the file."
+        : (err.message || String(err));
+      setError(`Upload failed: ${msg}`);
+      CyberAlert.error("Upload Failed", msg);
     } finally {
       setUploading(false);
       setUploadingField(null);
       setUploadProgress("");
+      if (e.target) {
+        e.target.value = "";
+      }
     }
   };
 
@@ -602,6 +635,7 @@ export default function AdminPage() {
           const updatedList = projects.map(p => p.id === editingProjectId ? (data[0] || { ...p, ...projectPayload }) : p);
           setProjects(updatedList);
           setSuccess("Project successfully updated!");
+          CyberAlert.success("Project Updated!", `"${projectForm.title}" has been updated.`);
           setEditingProjectId(null);
         } else {
           // Insert new project
@@ -609,10 +643,12 @@ export default function AdminPage() {
           if (error) throw error;
           setProjects([data[0], ...projects]);
           setSuccess("Project successfully added!");
+          CyberAlert.success("Project Added!", `"${projectForm.title}" has been added to your portfolio.`);
         }
         setProjectForm({ title: "", description: "", image_url: "", video_url: "", project_url: "", github_url: "", tags: "" });
       } catch (err: any) {
         setError(err.message);
+        CyberAlert.error("Project Error", err.message);
       } finally {
         setSaving(false);
       }
@@ -622,6 +658,7 @@ export default function AdminPage() {
         setProjects(updated);
         localStorage.setItem("sim_projects", JSON.stringify(updated));
         setSuccess("Project updated (Local Simulator)!");
+        CyberAlert.success("Project Updated!", `"${projectForm.title}" updated in simulator.`);
         setEditingProjectId(null);
       } else {
         const simulated: Project = { id: Math.random().toString(), created_at: new Date().toISOString(), ...projectPayload };
@@ -629,6 +666,7 @@ export default function AdminPage() {
         setProjects(updated);
         localStorage.setItem("sim_projects", JSON.stringify(updated));
         setSuccess("Project added (Local Simulator)!");
+        CyberAlert.success("Project Added!", `"${projectForm.title}" added to simulator.`);
       }
       setProjectForm({ title: "", description: "", image_url: "", video_url: "", project_url: "", github_url: "", tags: "" });
       setSaving(false);
@@ -652,15 +690,19 @@ export default function AdminPage() {
           result = await supabase.from("profile_settings").insert([profileForm]);
         }
         if (result.error) throw result.error;
+        localStorage.setItem("sim_profile", JSON.stringify(profileForm));
         setSuccess("Profile updated successfully!");
+        CyberAlert.success("Profile Updated!", "Your profile information has been saved successfully.");
       } catch (err: any) {
         setError(err.message);
+        CyberAlert.error("Profile Update Failed", err.message);
       } finally {
         setSaving(false);
       }
     } else {
       localStorage.setItem("sim_profile", JSON.stringify(profileForm));
       setSuccess("Profile updated (Local Simulator)!");
+      CyberAlert.success("Profile Updated!", "Profile saved to local storage.");
       setSaving(false);
     }
   };
@@ -733,16 +775,19 @@ export default function AdminPage() {
           const updatedList = experiences.map(exp => exp.id === editingExperienceId ? (data[0] || { ...exp, ...expPayload }) : exp);
           setExperiences(updatedList);
           setSuccess("Experience successfully updated!");
+          CyberAlert.success("Experience Updated!", `"${experienceForm.role} at ${experienceForm.company}" updated.`);
           setEditingExperienceId(null);
         } else {
           const { data, error } = await supabase.from("experiences").insert([expPayload]).select();
           if (error) throw error;
           setExperiences([data[0], ...experiences]);
           setSuccess("Experience successfully added!");
+          CyberAlert.success("Experience Added!", `"${experienceForm.role} at ${experienceForm.company}" added.`);
         }
         setExperienceForm({ role: "", company: "", duration: "", descriptionLines: "" });
       } catch (err: any) {
         setError(err.message);
+        CyberAlert.error("Experience Error", err.message);
       } finally {
         setSaving(false);
       }
@@ -752,6 +797,7 @@ export default function AdminPage() {
         setExperiences(updated);
         localStorage.setItem("sim_experiences", JSON.stringify(updated));
         setSuccess("Experience updated (Local Simulator)!");
+        CyberAlert.success("Experience Updated!", "Experience saved in simulator.");
         setEditingExperienceId(null);
       } else {
         const simulated = { id: Math.random().toString(), created_at: new Date().toISOString(), ...expPayload };
@@ -759,6 +805,7 @@ export default function AdminPage() {
         setExperiences(updated);
         localStorage.setItem("sim_experiences", JSON.stringify(updated));
         setSuccess("Experience added (Local Simulator)!");
+        CyberAlert.success("Experience Added!", "Experience added in simulator.");
       }
       setExperienceForm({ role: "", company: "", duration: "", descriptionLines: "" });
       setSaving(false);
@@ -790,16 +837,19 @@ export default function AdminPage() {
           const updatedList = educationList.map(edu => edu.id === editingEducationId ? (data[0] || { ...edu, ...eduPayload }) : edu);
           setEducationList(updatedList);
           setSuccess("Education successfully updated!");
+          CyberAlert.success("Education Updated!", `"${educationForm.degree}" updated.`);
           setEditingEducationId(null);
         } else {
           const { data, error } = await supabase.from("education").insert([eduPayload]).select();
           if (error) throw error;
           setEducationList([data[0], ...educationList]);
           setSuccess("Education successfully added!");
+          CyberAlert.success("Education Added!", `"${educationForm.degree}" added.`);
         }
         setEducationForm({ school: "", degree: "", year: "" });
       } catch (err: any) {
         setError(err.message);
+        CyberAlert.error("Education Error", err.message);
       } finally {
         setSaving(false);
       }
@@ -809,6 +859,7 @@ export default function AdminPage() {
         setEducationList(updated);
         localStorage.setItem("sim_education", JSON.stringify(updated));
         setSuccess("Education updated (Local Simulator)!");
+        CyberAlert.success("Education Updated!", "Education updated in simulator.");
         setEditingEducationId(null);
       } else {
         const simulated = { id: Math.random().toString(), created_at: new Date().toISOString(), ...eduPayload };
@@ -816,6 +867,7 @@ export default function AdminPage() {
         setEducationList(updated);
         localStorage.setItem("sim_education", JSON.stringify(updated));
         setSuccess("Education added (Local Simulator)!");
+        CyberAlert.success("Education Added!", "Education added in simulator.");
       }
       setEducationForm({ school: "", degree: "", year: "" });
       setSaving(false);
@@ -840,9 +892,11 @@ export default function AdminPage() {
         if (error) throw error;
         setSkills([data[0], ...skills]);
         setSuccess("Skill successfully added!");
+        CyberAlert.success("Skill Added!", `"${skillForm.name}" added to skills.`);
         setSkillForm({ name: "", category: "Backend" });
       } catch (err: any) {
         setError(err.message);
+        CyberAlert.error("Skill Error", err.message);
       } finally {
         setSaving(false);
       }
@@ -852,6 +906,7 @@ export default function AdminPage() {
       setSkills(updated);
       localStorage.setItem("sim_skills", JSON.stringify(updated));
       setSuccess("Skill added (Local Simulator)!");
+      CyberAlert.success("Skill Added!", `"${skillForm.name}" added in simulator.`);
       setSkillForm({ name: "", category: "Backend" });
       setSaving(false);
     }
@@ -875,9 +930,11 @@ export default function AdminPage() {
         if (error) throw error;
         setCertifications([data[0], ...certifications]);
         setSuccess("Certification successfully added!");
+        CyberAlert.success("Certification Added!", `"${certForm.name}" added.`);
         setCertForm({ name: "", issuer: "" });
       } catch (err: any) {
         setError(err.message);
+        CyberAlert.error("Certification Error", err.message);
       } finally {
         setSaving(false);
       }
@@ -887,6 +944,7 @@ export default function AdminPage() {
       setCertifications(updated);
       localStorage.setItem("sim_certs", JSON.stringify(updated));
       setSuccess("Certification added (Local Simulator)!");
+      CyberAlert.success("Certification Added!", `"${certForm.name}" added in simulator.`);
       setCertForm({ name: "", issuer: "" });
       setSaving(false);
     }
@@ -894,7 +952,8 @@ export default function AdminPage() {
 
   // Generic Deletion
   const handleDelete = async (table: string, id: string, setList: any, list: any) => {
-    if (!confirm(`Are you sure you want to delete this from ${table}?`)) return;
+    const result = await CyberAlert.confirm("Confirm Deletion", `Are you sure you want to delete this from ${table}?`);
+    if (!result.isConfirmed) return;
     setError("");
     setSuccess("");
 
@@ -908,8 +967,10 @@ export default function AdminPage() {
         if (error) throw error;
         setList(list.filter((item: any) => item.id !== id));
         setSuccess("Item deleted successfully!");
+        CyberAlert.success("Deleted!", "Item successfully removed.");
       } catch (err: any) {
         setError(err.message);
+        CyberAlert.error("Deletion Failed", err.message);
       }
     } else {
       const updated = list.filter((item: any) => item.id !== id);
@@ -917,6 +978,7 @@ export default function AdminPage() {
       const storageKey = table === "projects" ? "sim_projects" : `sim_${table}`;
       localStorage.setItem(storageKey, JSON.stringify(updated));
       setSuccess("Item deleted (Local Simulator)!");
+      CyberAlert.success("Deleted!", "Item removed from simulator.");
     }
   };
 

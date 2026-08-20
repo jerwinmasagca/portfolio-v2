@@ -11,6 +11,7 @@ import {
   Clock, Send, Code, ShieldCheck, HeartPulse
 } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/BrandIcons";
+import { CyberAlert, Toast } from "@/lib/sweetalert";
 
 // Fallback data seeded with user projects, experience, and skills
 const FALLBACK_PROJECTS: Project[] = [
@@ -240,6 +241,7 @@ export default function Home() {
         throw new Error("Server response was not ok");
       }
 
+      CyberAlert.success("Transmission Sent!", "Thank you! Your message has been received & delivered to Jerwin.");
       setSuccessMessage("Thank you! Transmission received & sent to Jerwin's email.");
       setContactForm({ name: "", email: "", message: "" });
     } catch (err: any) {
@@ -247,6 +249,7 @@ export default function Home() {
       try {
         const { error } = await supabase.from("contacts").insert([contactForm]);
         if (error) throw error;
+        CyberAlert.success("Transmission Received!", "Thank you! Your message has been saved.");
         setSuccessMessage("Thank you! Message received.");
         setContactForm({ name: "", email: "", message: "" });
       } catch (dbErr: any) {
@@ -259,10 +262,12 @@ export default function Home() {
             ...contactForm
           });
           localStorage.setItem("sim_contacts", JSON.stringify(list));
+          CyberAlert.success("Transmission Saved!", "Message stored successfully.");
           setSuccessMessage("Message received.");
           setContactForm({ name: "", email: "", message: "" });
         } catch (storageErr) {
           console.error("Local storage fallback failed:", storageErr);
+          CyberAlert.error("Transmission Failed", "Could not send message. Please try emailing directly.");
         }
       }
     } finally {
