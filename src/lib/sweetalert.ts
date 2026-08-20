@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
 
 export const Toast = Swal.mixin({
   toast: true,
@@ -9,6 +10,7 @@ export const Toast = Swal.mixin({
   background: "#0c152e",
   color: "#f8fafc",
   customClass: {
+    container: "z-[999999]",
     popup: "border border-cyan-500/30 shadow-[0_0_25px_rgba(6,182,212,0.25)] rounded-2xl text-sm font-sans",
   },
   didOpen: (toast) => {
@@ -28,6 +30,7 @@ export const CyberAlert = {
       confirmButtonColor: "#06b6d4",
       confirmButtonText: "Acknowledge",
       customClass: {
+        container: "z-[999999]",
         popup: "border border-cyan-500/30 shadow-[0_0_40px_rgba(6,182,212,0.3)] rounded-3xl backdrop-blur-xl font-sans",
         title: "font-syne font-bold text-white text-xl",
         htmlContainer: "text-slate-300 text-sm",
@@ -46,6 +49,7 @@ export const CyberAlert = {
       confirmButtonColor: "#ef4444",
       confirmButtonText: "Close",
       customClass: {
+        container: "z-[999999]",
         popup: "border border-red-500/30 shadow-[0_0_40px_rgba(239,68,68,0.3)] rounded-3xl backdrop-blur-xl font-sans",
         title: "font-syne font-bold text-white text-xl",
         htmlContainer: "text-slate-300 text-sm",
@@ -67,6 +71,7 @@ export const CyberAlert = {
       background: "#0c152e",
       color: "#f8fafc",
       customClass: {
+        container: "z-[999999]",
         popup: "border border-cyan-500/30 shadow-[0_0_40px_rgba(6,182,212,0.3)] rounded-3xl backdrop-blur-xl font-sans",
         title: "font-syne font-bold text-white text-xl",
         htmlContainer: "text-slate-300 text-sm",
