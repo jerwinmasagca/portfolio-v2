@@ -6,7 +6,7 @@ import { FileText } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export default function HeaderNavActions() {
-  const [resumeUrl, setResumeUrl] = useState<string>("");
+  const [resumeUrl, setResumeUrl] = useState<string>("https://srlbrzvdhxigwytveqdh.supabase.co/storage/v1/object/public/portfolio/uploads/b8il1h0bz1r.pdf");
   const [githubUrl, setGithubUrl] = useState<string>("https://github.com/jerwinmasagca");
   const [linkedinUrl, setLinkedinUrl] = useState<string>("https://linkedin.com");
 

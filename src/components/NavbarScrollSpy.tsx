@@ -183,7 +183,7 @@ export default function NavbarScrollSpy() {
             {/* Quick Actions at bottom of mobile menu */}
             <div className="pt-2 border-t border-white/10 flex items-center justify-between px-1">
               <a
-                href="/resume.pdf"
+                href="https://srlbrzvdhxigwytveqdh.supabase.co/storage/v1/object/public/portfolio/uploads/b8il1h0bz1r.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-mono font-semibold text-slate-300 hover:text-white transition-all border border-white/5"
