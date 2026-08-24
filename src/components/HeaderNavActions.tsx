@@ -17,7 +17,7 @@ export default function HeaderNavActions() {
       if (simProfileStr) {
         try {
           const parsed = JSON.parse(simProfileStr);
-          if (parsed.resume_url) setResumeUrl(parsed.resume_url);
+          if (parsed.resume_url) setResumeUrl(parsed.resume_url.split('?')[0] + `?t=${Date.now()}`);
           if (parsed.github) setGithubUrl(parsed.github);
           if (parsed.linkedin) setLinkedinUrl(parsed.linkedin);
         } catch (e) {
@@ -33,7 +33,7 @@ export default function HeaderNavActions() {
         .maybeSingle();
 
       if (!error && data) {
-        if (data.resume_url) setResumeUrl(data.resume_url);
+        if (data.resume_url) setResumeUrl(data.resume_url.split('?')[0] + `?t=${Date.now()}`);
         if (data.github) setGithubUrl(data.github);
         if (data.linkedin) setLinkedinUrl(data.linkedin);
       }

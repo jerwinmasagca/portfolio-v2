@@ -522,14 +522,16 @@ export default function AdminPage() {
       const { error: uploadError } = await supabase.storage
         .from("portfolio")
         .upload(filePath, file, {
-          cacheControl: "3600",
+          cacheControl: "0",
           upsert: true,
         });
 
       if (uploadError) throw uploadError;
 
       const res = supabase.storage.from("portfolio").getPublicUrl(filePath);
-      const url = res.data?.publicUrl || (res as any).publicURL || (res.data as any)?.publicURL || "";
+      const rawUrl = res.data?.publicUrl || (res as any).publicURL || (res.data as any)?.publicURL || "";
+      // Add cache-buster timestamp to prevent browser/CDN serving stale files
+      const url = rawUrl ? `${rawUrl}?t=${Date.now()}` : "";
 
       console.log("File uploaded successfully. Target field:", targetField, "Public URL:", url);
 
@@ -540,8 +542,23 @@ export default function AdminPage() {
         setProjectForm((prev) => ({ ...prev, video_url: url }));
         CyberAlert.success("Video Uploaded!", "Project video uploaded successfully.");
       } else if (targetField === "avatar_url") {
+        const updatedProfileWithAvatar = { ...profileForm, avatar_url: url };
         setProfileForm((prev) => ({ ...prev, avatar_url: url }));
-        CyberAlert.success("Avatar Uploaded!", "Profile photo uploaded. Click 'Save Settings' to apply.");
+        
+        // Auto-save avatar URL to Supabase and localStorage immediately
+        try {
+          const { data: existing } = await supabase.from("profile_settings").select("id").limit(1).maybeSingle();
+          if (existing) {
+            await supabase.from("profile_settings").update({ avatar_url: url }).eq("id", existing.id);
+          } else {
+            await supabase.from("profile_settings").insert([updatedProfileWithAvatar]);
+          }
+          localStorage.setItem("sim_profile", JSON.stringify(updatedProfileWithAvatar));
+        } catch (saveErr) {
+          console.warn("Auto-save avatar error:", saveErr);
+        }
+
+        CyberAlert.success("Avatar Uploaded & Saved!", "Profile photo uploaded and saved across the entire portfolio.");
       } else {
         const updatedProfile = { ...profileForm, resume_url: url };
         setProfileForm(updatedProfile);

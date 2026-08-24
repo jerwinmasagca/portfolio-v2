@@ -168,12 +168,15 @@ export default function Home() {
 
       // Process Profile
       if (profileResult.status === "fulfilled" && !profileResult.value.error && profileResult.value.data) {
+        const pData = profileResult.value.data;
         setProfile((prev) => ({
           ...prev,
-          ...profileResult.value.data,
-          name: profileResult.value.data.name?.trim() || prev.name || "Jerwin B. Masagca",
-          title: profileResult.value.data.title?.trim() || prev.title || "Full-Stack Developer",
-          bio: profileResult.value.data.bio?.trim() || prev.bio,
+          ...pData,
+          name: pData.name?.trim() || prev.name || "Jerwin B. Masagca",
+          title: pData.title?.trim() || prev.title || "Full-Stack Developer",
+          bio: pData.bio?.trim() || prev.bio,
+          // Cache-bust avatar URL to always show the latest uploaded photo
+          avatar_url: pData.avatar_url ? pData.avatar_url.split('?')[0] + `?t=${Date.now()}` : prev.avatar_url,
         }));
       }
 
@@ -299,7 +302,7 @@ export default function Home() {
 
   useEffect(() => {
     if (isCarouselPaused || filteredProjects.length <= 1) return;
-    const interval = setInterval(nextSlide, 3000);
+    const interval = setInterval(nextSlide, 5000);
     return () => clearInterval(interval);
   }, [nextSlide, isCarouselPaused, filteredProjects.length]);
 
@@ -443,6 +446,8 @@ export default function Home() {
                         <img
                           src={profile.avatar_url || "/jerwin_gradpic.JPG"}
                           alt={profile.name}
+                          width={340}
+                          height={340}
                           className="w-full h-full object-cover group-hover/photo:scale-105 transition-transform duration-700 ease-out"
                         />
 
@@ -549,8 +554,11 @@ export default function Home() {
                   {/* Carousel viewport */}
                   <div className="overflow-hidden rounded-2xl">
                     <div
-                      className="flex transition-transform duration-500 ease-out"
-                      style={{ transform: `translateX(-${carouselIndex * 100}%)` }}
+                      className="flex will-change-transform"
+                      style={{
+                        transform: `translateX(-${carouselIndex * 100}%)`,
+                        transition: 'transform 800ms cubic-bezier(0.25, 1, 0.5, 1)',
+                      }}
                     >
                       {filteredProjects.map((project) => (
                         <div key={project.id} className="w-full flex-shrink-0 px-2">
