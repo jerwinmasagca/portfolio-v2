@@ -2,6 +2,9 @@
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Project, ProfileSettings, Experience, Education, Certification, Skill, supabase } from "@/lib/supabase";
+import {
+  readCache, writeCache, isCacheFresh, dataChanged, CACHE_KEYS,
+} from "@/lib/cache";
 import SplineViewer from "@/components/SplineViewer";
 import ProjectCard from "@/components/ProjectCard";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -155,9 +158,57 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  // ── Stale-While-Revalidate data fetching with localStorage cache ─────────
   useEffect(() => {
-    async function fetchData() {
-      // Fire all queries in parallel for faster load
+    // Helper: merge raw Supabase profile data into a ProfileSettings shape
+    const mergeProfile = (pData: any, prev: ProfileSettings): ProfileSettings => ({
+      ...prev,
+      ...pData,
+      name: pData.name?.trim() || prev.name || "Jerwin B. Masagca",
+      title: pData.title?.trim() || prev.title || "Full-Stack Developer",
+      bio: pData.bio?.trim() || prev.bio,
+      avatar_url: pData.avatar_url
+        ? pData.avatar_url.split('?')[0] + `?t=${Date.now()}`
+        : prev.avatar_url,
+    });
+
+    // ── Phase 1: Instantly hydrate state from localStorage cache ──────────
+    const cachedProfile = readCache<ProfileSettings>(CACHE_KEYS.profile);
+    const cachedProjects = readCache<Project[]>(CACHE_KEYS.projects);
+    const cachedExperiences = readCache<Experience[]>(CACHE_KEYS.experiences);
+    const cachedEducation = readCache<Education[]>(CACHE_KEYS.education);
+    const cachedSkills = readCache<Skill[]>(CACHE_KEYS.skills);
+
+    const hasCache = !!(cachedProfile || cachedProjects || cachedExperiences || cachedEducation || cachedSkills);
+
+    if (cachedProfile?.data) setProfile((prev) => ({ ...prev, ...cachedProfile.data }));
+    if (cachedProjects?.data?.length) setProjects(cachedProjects.data);
+    else if (hasCache) setProjects(FALLBACK_PROJECTS);
+    if (cachedExperiences?.data?.length) setExperiences(cachedExperiences.data);
+    else if (hasCache) setExperiences(FALLBACK_EXPERIENCES);
+    if (cachedEducation?.data?.length) setEducationList(cachedEducation.data);
+    else if (hasCache) setEducationList(FALLBACK_EDUCATION);
+    if (cachedSkills?.data?.length) setSkills(cachedSkills.data);
+    else if (hasCache) setSkills(FALLBACK_SKILLS);
+
+    // If we had cached data, immediately remove loading state
+    if (hasCache) setLoading(false);
+
+    // ── Phase 2: Check if ALL caches are still fresh — skip network entirely ─
+    const allFresh =
+      isCacheFresh(CACHE_KEYS.profile) &&
+      isCacheFresh(CACHE_KEYS.projects) &&
+      isCacheFresh(CACHE_KEYS.experiences) &&
+      isCacheFresh(CACHE_KEYS.education) &&
+      isCacheFresh(CACHE_KEYS.skills);
+
+    if (allFresh) {
+      // Cache is completely fresh — nothing to do
+      return;
+    }
+
+    // ── Phase 3: Background refresh from Supabase ────────────────────────
+    async function refreshFromSupabase() {
       const [profileResult, projectsResult, experiencesResult, educationResult, skillsResult] = await Promise.allSettled([
         supabase.from("profile_settings").select("*").limit(1).maybeSingle(),
         supabase.from("projects").select("*").order("created_at", { ascending: false }),
@@ -166,51 +217,65 @@ export default function Home() {
         supabase.from("skills").select("*").order("created_at", { ascending: true }),
       ]);
 
-      // Process Profile
+      // Process Profile — only update state if data actually changed
       if (profileResult.status === "fulfilled" && !profileResult.value.error && profileResult.value.data) {
         const pData = profileResult.value.data;
-        setProfile((prev) => ({
-          ...prev,
-          ...pData,
-          name: pData.name?.trim() || prev.name || "Jerwin B. Masagca",
-          title: pData.title?.trim() || prev.title || "Full-Stack Developer",
-          bio: pData.bio?.trim() || prev.bio,
-          // Cache-bust avatar URL to always show the latest uploaded photo
-          avatar_url: pData.avatar_url ? pData.avatar_url.split('?')[0] + `?t=${Date.now()}` : prev.avatar_url,
-        }));
+        const merged = mergeProfile(pData, profile);
+        if (!cachedProfile?.data || dataChanged(cachedProfile.data, merged)) {
+          setProfile(merged);
+        }
+        writeCache(CACHE_KEYS.profile, merged);
       }
 
       // Process Projects
       if (projectsResult.status === "fulfilled" && !projectsResult.value.error && projectsResult.value.data?.length) {
-        setProjects(projectsResult.value.data);
-      } else {
+        const fresh = projectsResult.value.data;
+        if (!cachedProjects?.data || dataChanged(cachedProjects.data, fresh)) {
+          setProjects(fresh);
+        }
+        writeCache(CACHE_KEYS.projects, fresh);
+      } else if (!cachedProjects?.data?.length) {
         setProjects(FALLBACK_PROJECTS);
       }
 
       // Process Experiences
       if (experiencesResult.status === "fulfilled" && !experiencesResult.value.error && experiencesResult.value.data?.length) {
-        setExperiences(experiencesResult.value.data);
-      } else {
+        const fresh = experiencesResult.value.data;
+        if (!cachedExperiences?.data || dataChanged(cachedExperiences.data, fresh)) {
+          setExperiences(fresh);
+        }
+        writeCache(CACHE_KEYS.experiences, fresh);
+      } else if (!cachedExperiences?.data?.length) {
         setExperiences(FALLBACK_EXPERIENCES);
       }
 
       // Process Education
       if (educationResult.status === "fulfilled" && !educationResult.value.error && educationResult.value.data?.length) {
-        setEducationList(educationResult.value.data);
-      } else {
+        const fresh = educationResult.value.data;
+        if (!cachedEducation?.data || dataChanged(cachedEducation.data, fresh)) {
+          setEducationList(fresh);
+        }
+        writeCache(CACHE_KEYS.education, fresh);
+      } else if (!cachedEducation?.data?.length) {
         setEducationList(FALLBACK_EDUCATION);
       }
 
       // Process Skills
       if (skillsResult.status === "fulfilled" && !skillsResult.value.error && skillsResult.value.data?.length) {
-        setSkills(skillsResult.value.data);
-      } else {
+        const fresh = skillsResult.value.data;
+        if (!cachedSkills?.data || dataChanged(cachedSkills.data, fresh)) {
+          setSkills(fresh);
+        }
+        writeCache(CACHE_KEYS.skills, fresh);
+      } else if (!cachedSkills?.data?.length) {
         setSkills(FALLBACK_SKILLS);
       }
 
       setLoading(false);
     }
-    fetchData();
+
+    refreshFromSupabase();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleContactSubmit = async (e: React.FormEvent) => {
@@ -442,12 +507,14 @@ export default function Home() {
                       <div className="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 border-cyan-400/60 rounded-br pointer-events-none" />
 
                       {/* Portrait photo box with holographic scanline */}
-                      <div className="relative w-full aspect-square rounded-2xl overflow-hidden border border-white/10 bg-slate-900 shadow-inner group/photo">
+                      <div className="profile-photo-container relative w-full rounded-2xl overflow-hidden border border-white/10 bg-slate-900 shadow-inner group/photo">
                         <img
                           src={profile.avatar_url || "/jerwin_gradpic.JPG"}
                           alt={profile.name}
                           width={340}
                           height={340}
+                          loading="eager"
+                          decoding="async"
                           className="w-full h-full object-cover group-hover/photo:scale-105 transition-transform duration-700 ease-out"
                         />
 

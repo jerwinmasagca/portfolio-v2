@@ -49,6 +49,43 @@ body::before {
 }
 
 /* Glassmorphism utility */
+
+/* ─── Profile Photo Container: Fixed aspect ratio + skeleton placeholder ─── */
+.profile-photo-container {
+  aspect-ratio: 1 / 1;
+  min-height: 280px;
+  position: relative;
+  background: #0f172a;
+}
+
+/* Skeleton shimmer while image loads */
+.profile-photo-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    110deg,
+    rgba(15, 23, 42, 1) 30%,
+    rgba(30, 41, 59, 0.5) 50%,
+    rgba(15, 23, 42, 1) 70%
+  );
+  background-size: 200% 100%;
+  animation: profile-skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: inherit;
+}
+
+/* Hide shimmer once the image loads (image covers it via z-index) */
+.profile-photo-container img {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes profile-skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 .glass {
   background: rgba(10, 10, 20, 0.6);
   backdrop-filter: blur(12px);

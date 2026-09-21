@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Session } from "@supabase/supabase-js";
 import { Project, ProfileSettings, Experience, Education, Certification, Skill, supabase } from "@/lib/supabase";
+import { invalidateCache, CACHE_KEYS } from "@/lib/cache";
 import {
   Plus, Trash2, Globe, AlertTriangle, CheckCircle, Database,
   Upload, User, Briefcase, FileText, Link, Mail, Award, BookOpen, Key, Loader2, Edit2, X
@@ -554,6 +555,7 @@ export default function AdminPage() {
             await supabase.from("profile_settings").insert([updatedProfileWithAvatar]);
           }
           localStorage.setItem("sim_profile", JSON.stringify(updatedProfileWithAvatar));
+          invalidateCache(CACHE_KEYS.profile);
         } catch (saveErr) {
           console.warn("Auto-save avatar error:", saveErr);
         }
@@ -572,6 +574,7 @@ export default function AdminPage() {
             await supabase.from("profile_settings").insert([updatedProfile]);
           }
           localStorage.setItem("sim_profile", JSON.stringify(updatedProfile));
+          invalidateCache(CACHE_KEYS.profile);
         } catch (saveErr) {
           console.warn("Auto-save resume error:", saveErr);
         }
@@ -651,6 +654,7 @@ export default function AdminPage() {
           if (error) throw error;
           const updatedList = projects.map(p => p.id === editingProjectId ? (data[0] || { ...p, ...projectPayload }) : p);
           setProjects(updatedList);
+          invalidateCache(CACHE_KEYS.projects);
           setSuccess("Project successfully updated!");
           CyberAlert.success("Project Updated!", `"${projectForm.title}" has been updated.`);
           setEditingProjectId(null);
@@ -659,6 +663,7 @@ export default function AdminPage() {
           const { data, error } = await supabase.from("projects").insert([projectPayload]).select();
           if (error) throw error;
           setProjects([data[0], ...projects]);
+          invalidateCache(CACHE_KEYS.projects);
           setSuccess("Project successfully added!");
           CyberAlert.success("Project Added!", `"${projectForm.title}" has been added to your portfolio.`);
         }
@@ -674,6 +679,7 @@ export default function AdminPage() {
         const updated = projects.map(p => p.id === editingProjectId ? { ...p, ...projectPayload } : p);
         setProjects(updated);
         localStorage.setItem("sim_projects", JSON.stringify(updated));
+        invalidateCache(CACHE_KEYS.projects);
         setSuccess("Project updated (Local Simulator)!");
         CyberAlert.success("Project Updated!", `"${projectForm.title}" updated in simulator.`);
         setEditingProjectId(null);
@@ -682,6 +688,7 @@ export default function AdminPage() {
         const updated = [simulated, ...projects];
         setProjects(updated);
         localStorage.setItem("sim_projects", JSON.stringify(updated));
+        invalidateCache(CACHE_KEYS.projects);
         setSuccess("Project added (Local Simulator)!");
         CyberAlert.success("Project Added!", `"${projectForm.title}" added to simulator.`);
       }
@@ -708,6 +715,7 @@ export default function AdminPage() {
         }
         if (result.error) throw result.error;
         localStorage.setItem("sim_profile", JSON.stringify(profileForm));
+        invalidateCache(CACHE_KEYS.profile);
         setSuccess("Profile updated successfully!");
         CyberAlert.success("Profile Updated!", "Your profile information has been saved successfully.");
       } catch (err: any) {
@@ -718,6 +726,7 @@ export default function AdminPage() {
       }
     } else {
       localStorage.setItem("sim_profile", JSON.stringify(profileForm));
+      invalidateCache(CACHE_KEYS.profile);
       setSuccess("Profile updated (Local Simulator)!");
       CyberAlert.success("Profile Updated!", "Profile saved to local storage.");
       setSaving(false);
@@ -791,6 +800,7 @@ export default function AdminPage() {
           if (error) throw error;
           const updatedList = experiences.map(exp => exp.id === editingExperienceId ? (data[0] || { ...exp, ...expPayload }) : exp);
           setExperiences(updatedList);
+          invalidateCache(CACHE_KEYS.experiences);
           setSuccess("Experience successfully updated!");
           CyberAlert.success("Experience Updated!", `"${experienceForm.role} at ${experienceForm.company}" updated.`);
           setEditingExperienceId(null);
@@ -798,6 +808,7 @@ export default function AdminPage() {
           const { data, error } = await supabase.from("experiences").insert([expPayload]).select();
           if (error) throw error;
           setExperiences([data[0], ...experiences]);
+          invalidateCache(CACHE_KEYS.experiences);
           setSuccess("Experience successfully added!");
           CyberAlert.success("Experience Added!", `"${experienceForm.role} at ${experienceForm.company}" added.`);
         }
@@ -813,6 +824,7 @@ export default function AdminPage() {
         const updated = experiences.map(exp => exp.id === editingExperienceId ? { ...exp, ...expPayload } : exp);
         setExperiences(updated);
         localStorage.setItem("sim_experiences", JSON.stringify(updated));
+        invalidateCache(CACHE_KEYS.experiences);
         setSuccess("Experience updated (Local Simulator)!");
         CyberAlert.success("Experience Updated!", "Experience saved in simulator.");
         setEditingExperienceId(null);
@@ -821,6 +833,7 @@ export default function AdminPage() {
         const updated = [simulated, ...experiences];
         setExperiences(updated);
         localStorage.setItem("sim_experiences", JSON.stringify(updated));
+        invalidateCache(CACHE_KEYS.experiences);
         setSuccess("Experience added (Local Simulator)!");
         CyberAlert.success("Experience Added!", "Experience added in simulator.");
       }
@@ -853,6 +866,7 @@ export default function AdminPage() {
           if (error) throw error;
           const updatedList = educationList.map(edu => edu.id === editingEducationId ? (data[0] || { ...edu, ...eduPayload }) : edu);
           setEducationList(updatedList);
+          invalidateCache(CACHE_KEYS.education);
           setSuccess("Education successfully updated!");
           CyberAlert.success("Education Updated!", `"${educationForm.degree}" updated.`);
           setEditingEducationId(null);
@@ -860,6 +874,7 @@ export default function AdminPage() {
           const { data, error } = await supabase.from("education").insert([eduPayload]).select();
           if (error) throw error;
           setEducationList([data[0], ...educationList]);
+          invalidateCache(CACHE_KEYS.education);
           setSuccess("Education successfully added!");
           CyberAlert.success("Education Added!", `"${educationForm.degree}" added.`);
         }
@@ -875,6 +890,7 @@ export default function AdminPage() {
         const updated = educationList.map(edu => edu.id === editingEducationId ? { ...edu, ...eduPayload } : edu);
         setEducationList(updated);
         localStorage.setItem("sim_education", JSON.stringify(updated));
+        invalidateCache(CACHE_KEYS.education);
         setSuccess("Education updated (Local Simulator)!");
         CyberAlert.success("Education Updated!", "Education updated in simulator.");
         setEditingEducationId(null);
@@ -883,6 +899,7 @@ export default function AdminPage() {
         const updated = [simulated, ...educationList];
         setEducationList(updated);
         localStorage.setItem("sim_education", JSON.stringify(updated));
+        invalidateCache(CACHE_KEYS.education);
         setSuccess("Education added (Local Simulator)!");
         CyberAlert.success("Education Added!", "Education added in simulator.");
       }
@@ -908,6 +925,7 @@ export default function AdminPage() {
         const { data, error } = await supabase.from("skills").insert([newSkill]).select();
         if (error) throw error;
         setSkills([data[0], ...skills]);
+        invalidateCache(CACHE_KEYS.skills);
         setSuccess("Skill successfully added!");
         CyberAlert.success("Skill Added!", `"${skillForm.name}" added to skills.`);
         setSkillForm({ name: "", category: "Backend" });
@@ -922,6 +940,7 @@ export default function AdminPage() {
       const updated = [simulated, ...skills];
       setSkills(updated);
       localStorage.setItem("sim_skills", JSON.stringify(updated));
+      invalidateCache(CACHE_KEYS.skills);
       setSuccess("Skill added (Local Simulator)!");
       CyberAlert.success("Skill Added!", `"${skillForm.name}" added in simulator.`);
       setSkillForm({ name: "", category: "Backend" });
@@ -983,6 +1002,9 @@ export default function AdminPage() {
         const { error } = await supabase.from(table).delete().eq("id", id);
         if (error) throw error;
         setList(list.filter((item: any) => item.id !== id));
+        // Invalidate the matching cache key so the portfolio page fetches fresh data
+        const cacheKeyMap: Record<string, string> = { projects: CACHE_KEYS.projects, experiences: CACHE_KEYS.experiences, education: CACHE_KEYS.education, skills: CACHE_KEYS.skills, certifications: "certifications" };
+        if (cacheKeyMap[table]) invalidateCache(cacheKeyMap[table]);
         setSuccess("Item deleted successfully!");
         CyberAlert.success("Deleted!", "Item successfully removed.");
       } catch (err: any) {
@@ -994,6 +1016,8 @@ export default function AdminPage() {
       setList(updated);
       const storageKey = table === "projects" ? "sim_projects" : `sim_${table}`;
       localStorage.setItem(storageKey, JSON.stringify(updated));
+      const cacheKeyMapSim: Record<string, string> = { projects: CACHE_KEYS.projects, experiences: CACHE_KEYS.experiences, education: CACHE_KEYS.education, skills: CACHE_KEYS.skills, certifications: "certifications" };
+      if (cacheKeyMapSim[table]) invalidateCache(cacheKeyMapSim[table]);
       setSuccess("Item deleted (Local Simulator)!");
       CyberAlert.success("Deleted!", "Item removed from simulator.");
     }
