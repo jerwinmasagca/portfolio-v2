@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { MessageCircle, X, Send, Bot, User, Loader2 } from "lucide-react";
+import { X, Send, Bot, User, Loader2 } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -36,6 +36,18 @@ export default function ChatBot() {
 
   useEffect(() => {
     if (isOpen) inputRef.current?.focus();
+  }, [isOpen]);
+
+  // Lock body scroll on mobile when chat is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isOpen]);
 
   const handleMouseEnter = () => {
@@ -112,8 +124,12 @@ export default function ChatBot() {
 
   return (
     <>
-      {/* Floating Chat Bubble Container */}
-      <div className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-[99] flex items-center justify-center pointer-events-auto">
+      {/* Floating Chat Bubble — only visible when chat is CLOSED */}
+      <div
+        className={`fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-[99] flex items-center justify-center pointer-events-auto transition-all duration-300 ${
+          isOpen ? "scale-0 opacity-0 pointer-events-none" : "scale-100 opacity-100"
+        }`}
+      >
         {/* Floating Zzz Particles when Sleeping */}
         {isSleeping && (
           <div className="absolute -top-7 -left-1 pointer-events-none select-none font-mono font-black text-cyan-300">
@@ -138,20 +154,16 @@ export default function ChatBot() {
               ? "bg-slate-950/95 border-cyan-400/50 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)] animate-bot-sleep"
               : isWaking
               ? "bg-gradient-to-tr from-cyan-500 to-sky-400 border-cyan-300 text-slate-950 shadow-[0_0_30px_rgba(6,182,212,0.8)] scale-110 animate-bot-wake"
-              : isOpen
-              ? "bg-slate-900 border-cyan-400/60 text-cyan-300 shadow-[0_0_25px_rgba(6,182,212,0.5)]"
               : "bg-slate-950/95 border-cyan-400/60 text-cyan-300 shadow-[0_0_25px_rgba(6,182,212,0.5)] hover:shadow-[0_0_35px_rgba(6,182,212,0.7)] hover:border-cyan-300 hover:scale-105"
           }`}
-          aria-label="Toggle AI Assistant"
+          aria-label="Open AI Assistant"
         >
           {/* Subtle Ambient Pulse Ring when awake */}
           {!isSleeping && (
             <span className="absolute -inset-1 rounded-full bg-cyan-400/20 animate-ping pointer-events-none duration-1000" />
           )}
 
-          {isOpen ? (
-            <X className="w-6 h-6 text-white transition-transform duration-200" />
-          ) : isSleeping ? (
+          {isSleeping ? (
             /* Sleeping Bot Face Icon */
             <svg viewBox="0 0 36 36" className="w-7 h-7 transition-all duration-300" fill="none" xmlns="http://www.w3.org/2000/svg">
               <line x1="18" y1="4" x2="18" y2="8" stroke="#38bdf8" strokeWidth="2.5" strokeLinecap="round" />
@@ -178,28 +190,52 @@ export default function ChatBot() {
         </button>
       </div>
 
-      {/* Chat Panel */}
+      {/* Backdrop overlay (mobile only) */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-[98] bg-black/60 backdrop-blur-sm sm:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Chat Modal Panel
+          - Mobile: full-screen with safe-area insets
+          - Desktop: floating panel in bottom-right corner */}
       <div
-        className={`fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-[99] w-[calc(100vw-2rem)] max-w-[360px] max-h-[75vh] sm:max-h-[520px] flex flex-col rounded-2xl border border-white/10 bg-slate-950/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] transition-all duration-300 origin-bottom-right ${
-          isOpen
-            ? "scale-100 opacity-100 pointer-events-auto translate-y-0"
-            : "scale-90 opacity-0 pointer-events-none translate-y-4"
-        }`}
+        className={`fixed z-[99] flex flex-col bg-slate-950/[0.98] backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] transition-all duration-300
+          /* Mobile: full-screen */
+          inset-0 sm:inset-auto
+          /* Desktop: floating panel */
+          sm:bottom-24 sm:right-6 sm:w-[380px] sm:max-h-[520px] sm:rounded-2xl sm:border sm:border-white/10
+          ${
+            isOpen
+              ? "scale-100 opacity-100 pointer-events-auto translate-y-0"
+              : "scale-95 sm:scale-90 opacity-0 pointer-events-none translate-y-4"
+          }`}
+        style={{ transformOrigin: "bottom right" }}
       >
-        {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10 rounded-t-2xl bg-gradient-to-r from-cyan-500/10 to-sky-500/5">
+        {/* Header with Close Button */}
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10 sm:rounded-t-2xl bg-gradient-to-r from-cyan-500/10 to-sky-500/5 flex-shrink-0">
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-500 to-sky-600 flex items-center justify-center shadow-lg">
             <Bot className="w-5 h-5 text-white" />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-white leading-tight">Jerwin&apos;s Assistant</p>
             <p className="text-[10px] font-mono text-cyan-400 tracking-wider">POWERED BY GEMINI FLASH</p>
           </div>
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
+          {/* Close Button */}
+          <button
+            onClick={() => setIsOpen(false)}
+            className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 flex items-center justify-center transition-all duration-200 cursor-pointer flex-shrink-0 ml-1"
+            aria-label="Close chat"
+          >
+            <X className="w-4 h-4 text-slate-400 hover:text-white transition-colors" />
+          </button>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 min-h-[280px] max-h-[340px] scrollbar-thin">
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 min-h-0 scrollbar-thin">
           {messages.map((msg, idx) => (
             <div
               key={idx}
@@ -247,8 +283,8 @@ export default function ChatBot() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
-        <div className="px-4 pb-4 pt-2 border-t border-white/5">
+        {/* Input — pinned to bottom with safe area padding on mobile */}
+        <div className="px-4 pb-4 pt-2 border-t border-white/5 flex-shrink-0" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
           <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 focus-within:border-cyan-500/30 transition-colors">
             <input
               ref={inputRef}

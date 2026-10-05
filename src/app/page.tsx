@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Project, ProfileSettings, Experience, Education, Certification, Skill, supabase } from "@/lib/supabase";
 import {
@@ -89,6 +91,16 @@ export default function Home() {
   const [isWatercolor, setIsWatercolor] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [introMinTimePassed, setIntroMinTimePassed] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIntroMinTimePassed(true);
+    }, 2800); // Guarantees the intro plays for at least 2.8 seconds
+    return () => clearTimeout(timer);
+  }, []);
+
+  const showIntro = loading || !introMinTimePassed;
   const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -107,6 +119,7 @@ export default function Home() {
     title: "Full-Stack Developer Intern",
     bio: "Full-Stack Developer Intern with hands-on experience building secure web, desktop, and mobile applications. Specializes in backend system structures, database migrations, SSO systems, and RBAC permissions.",
     spline_url: "https://my.spline.design/roomrelaxingcopy-dNXtjCuu7tPa7pG8yhZ5X4ct/",
+    avatar_url: "/jerwin_gradpic.JPG",
     github: "https://github.com",
     linkedin: "https://linkedin.com",
     email: "masagca.jerwin.bedro@gmail.com"
@@ -167,8 +180,9 @@ export default function Home() {
       name: pData.name?.trim() || prev.name || "Jerwin B. Masagca",
       title: pData.title?.trim() || prev.title || "Full-Stack Developer",
       bio: pData.bio?.trim() || prev.bio,
+      // Strip query params for stable comparison — avoids false dataChanged() diffs
       avatar_url: pData.avatar_url
-        ? pData.avatar_url.split('?')[0] + `?t=${Date.now()}`
+        ? pData.avatar_url.split('?')[0]
         : prev.avatar_url,
     });
 
@@ -222,7 +236,18 @@ export default function Home() {
         const pData = profileResult.value.data;
         const merged = mergeProfile(pData, profile);
         if (!cachedProfile?.data || dataChanged(cachedProfile.data, merged)) {
-          setProfile(merged);
+          // If the avatar URL changed, preload the new image before updating state
+          // so the browser already has it cached and the swap is instant (no flash)
+          const newAvatarUrl = merged.avatar_url;
+          const currentAvatarUrl = cachedProfile?.data?.avatar_url || profile.avatar_url;
+          if (newAvatarUrl && newAvatarUrl !== currentAvatarUrl) {
+            const preload = new window.Image();
+            preload.src = newAvatarUrl;
+            preload.onload = () => setProfile(merged);
+            preload.onerror = () => setProfile(merged); // still update on error
+          } else {
+            setProfile(merged);
+          }
         }
         writeCache(CACHE_KEYS.profile, merged);
       }
@@ -379,7 +404,49 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen text-white bg-transparent font-sans selection:bg-cyan-500/20 relative overflow-hidden">
 
-      {/* Living Liquid Pastel Mesh Canvas (Light Mode / Stripe Style) */}
+      {/* Cinematic "JM" Logo Intro Screen */}
+      <div 
+        className={`fixed inset-0 z-[999] bg-slate-950 flex flex-col items-center justify-center transition-all duration-[1200ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
+          showIntro ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none scale-125"
+        }`}
+      >
+        <div className="relative flex flex-col items-center justify-center">
+          
+          {/* Logo & Rings Wrapper */}
+          <div className="relative flex items-center justify-center">
+            {/* Outer glowing sci-fi rings */}
+            <div className="absolute w-40 h-40 border-[1px] border-cyan-400/40 rounded-full animate-[spin_4s_linear_infinite] pointer-events-none" />
+            <div className="absolute w-48 h-48 border-[1px] border-dashed border-indigo-400/30 rounded-full animate-[spin_6s_linear_infinite_reverse] pointer-events-none" />
+            
+            {/* Main JM Emblem */}
+            <div className="relative w-32 h-32 rounded-full bg-slate-900/50 backdrop-blur-md flex items-center justify-center border-2 border-cyan-400/80 shadow-[0_0_40px_rgba(6,182,212,0.5)] overflow-hidden group">
+              {/* Animated Laser Scanline inside the logo */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-300/40 to-transparent w-full h-full animate-[shimmer_2s_infinite] -translate-y-full" />
+              
+              <span className="font-syne text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-white to-cyan-400 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] z-10">
+                JM
+              </span>
+            </div>
+          </div>
+
+          {/* Typography Reveal */}
+          <div className="mt-8 overflow-hidden">
+            <h1 className="font-syne text-2xl tracking-[0.3em] font-bold text-white uppercase animate-[pulse_2s_ease-in-out_infinite]">
+              Jerwin <span className="text-cyan-400">Masagca</span>
+            </h1>
+          </div>
+          
+          {/* Subtitle / Loading indicator */}
+          <div className="mt-4 flex items-center gap-3">
+            <div className="w-12 h-[1px] bg-gradient-to-r from-transparent to-cyan-400/50" />
+            <span className="font-mono text-[10px] tracking-[0.4em] text-cyan-400/70 uppercase">
+              Initializing System
+            </span>
+            <div className="w-12 h-[1px] bg-gradient-to-l from-transparent to-cyan-400/50" />
+          </div>
+
+        </div>
+      </div>      {/* Living Liquid Pastel Mesh Canvas (Light Mode / Stripe Style) */}
       {isWatercolor && (
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none bg-[#f8fafc]">
           {/* Subtle architectural dot grid texture */}
@@ -508,14 +575,13 @@ export default function Home() {
 
                       {/* Portrait photo box with holographic scanline */}
                       <div className="profile-photo-container relative w-full rounded-2xl overflow-hidden border border-white/10 bg-slate-900 shadow-inner group/photo">
-                        <img
+                        <Image
                           src={profile.avatar_url || "/jerwin_gradpic.JPG"}
                           alt={profile.name}
                           width={340}
                           height={340}
-                          loading="eager"
-                          decoding="async"
-                          className="w-full h-full object-cover group-hover/photo:scale-105 transition-transform duration-700 ease-out"
+                          priority
+                          className="absolute inset-0 w-full h-full object-cover group-hover/photo:scale-105 transition-transform duration-700 ease-out z-[1]"
                         />
 
                         {/* Holographic Cyan Laser Scanline */}

@@ -75,11 +75,7 @@ body::before {
   border-radius: inherit;
 }
 
-/* Hide shimmer once the image loads (image covers it via z-index) */
-.profile-photo-container img {
-  position: relative;
-  z-index: 1;
-}
+
 
 @keyframes profile-skeleton-shimmer {
   0%   { background-position: 200% 0; }
